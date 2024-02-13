@@ -1,0 +1,7 @@
+/.idea/
+/.ruff_cache/
+/dist/
+/build/
+
+__pycache__/
+*.spec

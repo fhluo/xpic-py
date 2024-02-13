@@ -1,0 +1,25 @@
+version: 3
+
+tasks:
+  format:
+    cmd: poetry run ruff format .
+
+  check:
+    cmd: poetry run ruff check .
+        
+  list:
+    cmd: poetry run python xpic-cli.py list
+
+  save:
+    cmd: poetry run python xpic-cli.py save
+
+  run:
+    cmd: poetry run python xpic.py
+
+  build-cli:
+    cmds:
+      - poetry run pyinstaller --onefile --name xpic-cli.py
+
+  build:
+    deps:
+        - build-cli

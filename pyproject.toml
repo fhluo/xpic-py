@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "xpic"
+version = "0.1.0"
+description = ""
+authors = ["fhluo <20843637+fhluo@users.noreply.github.com>"]
+readme = "readme.md"
+
+[tool.poetry.dependencies]
+python = "3.12.*"
+requests = "^2.31.0"
+pillow = "^10.2.0"
+typer = "^0.9.0"
+rich = "^13.7.0"
+pyside6 = "^6.6.1"
+win32mica = "^3.0"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.2.1"
+pyinstaller = "^6.4.0"
+
+[tool.ruff]
+line-length = 120
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
