@@ -20,7 +20,7 @@ def list_command() -> None:
 
 @cli.command()
 def save(dst: Annotated[Path, typer.Option(help="Path to save wallpapers.")] = ".") -> None:
-    """save wallpapers."""
+    """Save wallpapers."""
     spotlight.save_images(dst)
     bing.save_images(dst)
 
