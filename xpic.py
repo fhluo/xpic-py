@@ -5,7 +5,7 @@ from shutil import copyfile
 
 import win32mica
 from PySide6.QtCore import QSize, Qt
-from PySide6.QtGui import QIcon, QPixmap, QCursor, QAction
+from PySide6.QtGui import QIcon, QPixmap, QCursor, QAction, QMouseEvent, QContextMenuEvent
 from PySide6.QtWidgets import (
     QVBoxLayout,
     QApplication,
@@ -23,7 +23,7 @@ from wallpapers import cache_images, get_cached_images
 
 
 class ContextMenu(QMenu):
-    def __init__(self, parent: QWidget):
+    def __init__(self, parent: QWidget) -> None:
         super().__init__(parent)
 
         self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
@@ -46,17 +46,17 @@ class ContextMenu(QMenu):
 
 
 class ImageLabel(QLabel):
-    def __init__(self, path: str | os.PathLike):
+    def __init__(self, path: str | os.PathLike) -> None:
         super().__init__()
 
         self.path = Path(path)
         self.setScaledContents(True)
         self.setPixmap(QPixmap(self.path))
 
-    def open(self):
+    def open(self) -> None:
         os.startfile(self.path)
 
-    def save(self):
+    def save(self) -> None:
         filename, _ = QFileDialog.getSaveFileName(
             parent=self,
             caption="保存",
@@ -67,10 +67,17 @@ class ImageLabel(QLabel):
         if filename != "":
             copyfile(self.path, filename)
 
-    def set_as_desktop_wallpaper(self):
+    def set_as_desktop_wallpaper(self) -> None:
         wallpapers.set_desktop_wallpaper(self.path)
 
-    def contextMenuEvent(self, event):
+    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
+        super().mouseDoubleClickEvent(event)
+
+        self.open()
+
+    def contextMenuEvent(self, event: QContextMenuEvent) -> None:
+        super().contextMenuEvent(event)
+
         menu = ContextMenu(self)
         menu.action_open.triggered.connect(self.open)
         menu.action_save.triggered.connect(self.save)
@@ -78,8 +85,9 @@ class ImageLabel(QLabel):
 
 
 class ImagesWidget(QWidget):
-    def __init__(self, size=QSize(int(192 * 1.25), int(108 * 1.25))):
+    def __init__(self, size=QSize(int(192 * 1.25), int(108 * 1.25))) -> None:
         super().__init__()
+
         layout = QGridLayout(self)
         layout.setSpacing(30)
         layout.setContentsMargins(50, 40, 50, 40)
@@ -113,7 +121,7 @@ class ImagesWidget(QWidget):
         self.setFixedSize(width, height)
 
     @staticmethod
-    def calc_count(target):
+    def calc_count(target) -> int:
         """Calculate the widgets every row"""
         number = 1
         count = 2
@@ -128,8 +136,9 @@ class ImagesWidget(QWidget):
 
 
 class MainWindow(QWidget):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
+
         self.setWindowTitle(config.AppName)
 
         self._layout = QVBoxLayout(self)
