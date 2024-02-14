@@ -5,8 +5,18 @@ from pathlib import Path
 from shutil import copyfile
 
 import win32mica
-from PySide6.QtCore import QSize, Qt
-from PySide6.QtGui import QIcon, QPixmap, QCursor, QAction, QMouseEvent, QContextMenuEvent, QPainter, QBrush, QColor
+from PySide6.QtCore import QSize, Qt, QMimeData, QUrl, QPoint
+from PySide6.QtGui import (
+    QIcon,
+    QPixmap,
+    QCursor,
+    QAction,
+    QPainter,
+    QBrush,
+    QColor,
+    QDrag,
+    QImage,
+)
 from PySide6.QtWidgets import (
     QVBoxLayout,
     QApplication,
@@ -67,12 +77,17 @@ class ImageLabel(QLabel):
 
         self.path = Path(path)
         self.setScaledContents(True)
-
         self.setPixmap(self.rounded_pixmap)
+
+        self.drag_start_pos: QPoint | None = None
 
     @cached_property
     def rounded_pixmap(self) -> QPixmap:
         return get_rounded_pixmap(self.path, 50)
+
+    @cached_property
+    def scaled_pixmap(self) -> QPixmap:
+        return QPixmap.fromImage(self.rounded_pixmap.toImage().smoothScaled(self.width(), self.height()))
 
     def open(self) -> None:
         os.startfile(self.path)
@@ -91,18 +106,47 @@ class ImageLabel(QLabel):
     def set_as_desktop_wallpaper(self) -> None:
         wallpapers.set_desktop_wallpaper(self.path)
 
-    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
+    def mouseDoubleClickEvent(self, event) -> None:
         super().mouseDoubleClickEvent(event)
 
         self.open()
 
-    def contextMenuEvent(self, event: QContextMenuEvent) -> None:
+    def contextMenuEvent(self, event) -> None:
         super().contextMenuEvent(event)
 
         menu = ContextMenu(self)
         menu.action_open.triggered.connect(self.open)
         menu.action_save.triggered.connect(self.save)
         menu.action_set_as_desktop_wallpaper.triggered.connect(self.set_as_desktop_wallpaper)
+
+    def mousePressEvent(self, event) -> None:
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.drag_start_pos = event.position().toPoint()
+
+    def mouseMoveEvent(self, event):
+        if event.buttons() != Qt.MouseButton.LeftButton:
+            return
+
+        if self.drag_start_pos is None:
+            return
+
+        if (event.position().toPoint() - self.drag_start_pos).manhattanLength() < QApplication.startDragDistance():
+            return
+
+        self.drag()
+
+    def drag(self):
+        drag = QDrag(self)
+
+        data = QMimeData()
+        data.setImageData(QImage(self.path))
+        data.setUrls([QUrl(self.path.as_uri())])
+        drag.setMimeData(data)
+
+        drag.setPixmap(self.scaled_pixmap)
+        drag.exec(Qt.DropAction.CopyAction)
+
+        self.drag_start_pos = None
 
 
 class ImagesWidget(QWidget):
