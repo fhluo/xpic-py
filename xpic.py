@@ -1,11 +1,12 @@
 import os
 import sys
+from functools import cached_property
 from pathlib import Path
 from shutil import copyfile
 
 import win32mica
 from PySide6.QtCore import QSize, Qt
-from PySide6.QtGui import QIcon, QPixmap, QCursor, QAction, QMouseEvent, QContextMenuEvent
+from PySide6.QtGui import QIcon, QPixmap, QCursor, QAction, QMouseEvent, QContextMenuEvent, QPainter, QBrush, QColor
 from PySide6.QtWidgets import (
     QVBoxLayout,
     QApplication,
@@ -45,13 +46,33 @@ class ContextMenu(QMenu):
         self.popup(QCursor.pos())
 
 
+def get_rounded_pixmap(path: str | os.PathLike, radius: int) -> QPixmap:
+    original = QPixmap(path)
+
+    rounded = QPixmap(original.size())
+    rounded.fill(QColor(0, 0, 0, 0))
+
+    painter = QPainter(rounded)
+    painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+    painter.setBrush(QBrush(original))
+    painter.setPen(Qt.PenStyle.NoPen)
+    painter.drawRoundedRect(original.rect(), radius, radius)
+
+    return rounded
+
+
 class ImageLabel(QLabel):
     def __init__(self, path: str | os.PathLike) -> None:
         super().__init__()
 
         self.path = Path(path)
         self.setScaledContents(True)
-        self.setPixmap(QPixmap(self.path))
+
+        self.setPixmap(self.rounded_pixmap)
+
+    @cached_property
+    def rounded_pixmap(self) -> QPixmap:
+        return get_rounded_pixmap(self.path, 50)
 
     def open(self) -> None:
         os.startfile(self.path)
