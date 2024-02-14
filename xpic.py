@@ -78,6 +78,7 @@ class ImageLabel(QLabel):
         self.path = Path(path)
         self.setScaledContents(True)
         self.setPixmap(self.rounded_pixmap)
+        self.setStyleSheet("background-color: transparent;")
 
         self.drag_start_pos: QPoint | None = None
 
@@ -86,8 +87,8 @@ class ImageLabel(QLabel):
         return get_rounded_pixmap(self.path, 50)
 
     @cached_property
-    def scaled_pixmap(self) -> QPixmap:
-        return QPixmap.fromImage(self.rounded_pixmap.toImage().smoothScaled(self.width(), self.height()))
+    def grabbed_pixmap(self) -> QPixmap:
+        return self.grab()
 
     def open(self) -> None:
         os.startfile(self.path)
@@ -143,7 +144,7 @@ class ImageLabel(QLabel):
         data.setUrls([QUrl(self.path.as_uri())])
         drag.setMimeData(data)
 
-        drag.setPixmap(self.scaled_pixmap)
+        drag.setPixmap(self.grabbed_pixmap)
         drag.exec(Qt.DropAction.CopyAction)
 
         self.drag_start_pos = None
@@ -222,7 +223,7 @@ class MainWindow(QWidget):
 
 
 class App:
-    icon_path = "./assets/xpic.ico"
+    icon_path = "./assets/xpic.png"
 
     def __init__(self) -> None:
         self._app = QApplication(sys.argv)
