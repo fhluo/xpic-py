@@ -6,7 +6,7 @@ from pathlib import Path
 from shutil import copyfile
 
 import win32mica
-from PySide6.QtCore import QSize, Qt, QMimeData, QUrl, QPoint
+from PySide6.QtCore import Qt, QMimeData, QUrl, QPoint
 from PySide6.QtGui import (
     QIcon,
     QPixmap,
@@ -27,7 +27,6 @@ from PySide6.QtWidgets import (
     QMenu,
     QWidget,
     QScrollArea,
-    QSizePolicy,
 )
 from win32mica import MicaTheme, MicaStyle
 
@@ -169,7 +168,11 @@ class ImagesWidget(QWidget):
 
         self._layout = layout
 
-        cache_images()
+        try:
+            cache_images()
+        except (Exception,):
+            pass
+
         self.images = list(get_cached_images())
         self.image_labels = [ImageLabel(img) for img in self.images]
 
