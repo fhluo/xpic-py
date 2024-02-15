@@ -3,11 +3,12 @@ from typing import Generator
 
 import config
 from . import bing, spotlight
-from .image import ImageInfo, get_image_info, set_desktop_wallpaper
+from .image import Size, ImageInfo, get_image_info, set_desktop_wallpaper
 
 __all__ = [
     "bing",
     "spotlight",
+    "Size",
     "ImageInfo",
     "get_image_info",
     "set_desktop_wallpaper",

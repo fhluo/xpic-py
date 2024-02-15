@@ -5,17 +5,22 @@ from typing import NamedTuple
 from PIL import Image
 
 
+class Size(NamedTuple):
+    width: int
+    height: int
+
+
 class ImageInfo(NamedTuple):
-    size: tuple[int, int]
+    size: Size
     format: str
 
     @property
     def width(self) -> int:
-        return self.size[0]
+        return self.size.width
 
     @property
     def height(self) -> int:
-        return self.size[1]
+        return self.size.height
 
 
 def get_image_info(path: str | os.PathLike) -> ImageInfo | None:

@@ -1,0 +1,56 @@
+QMenu {
+    background-color: rgba(7, 15, 43, 90%);
+    border-radius: 4px;
+    font-size: 14px;
+    padding: 5px 0px;
+}
+
+QMenu::item {
+    background-color: transparent;
+    padding: 6px 50px 6px 20px;
+    margin: 0px 5px;
+    color: white;
+}
+
+QMenu::item:selected {
+    background-color: rgba(255, 255, 255, 20%);
+    border-radius: 4px;
+}
+
+QScrollBar:vertical {
+    border: none;
+    background: transparent;
+    width: 8px;
+    margin: 0px 0px 0px 0px;
+}
+
+QScrollBar::handle:vertical {
+    background: rgba(128, 128, 128, 0.5);
+    min-height: 20px;
+    border-radius: 4px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: rgba(128, 128, 128, 0.8);
+}
+
+QScrollBar::handle:vertical:pressed {
+    background: rgba(128, 128, 128, 1);
+}
+
+QScrollBar::add-line:vertical {
+    height: 0px;
+    subcontrol-position: bottom;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:vertical {
+    height: 0px;
+    subcontrol-position: top;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:vertical {
+    background: none;
+}

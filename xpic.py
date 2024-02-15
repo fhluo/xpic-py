@@ -1,3 +1,4 @@
+import math
 import os
 import sys
 from functools import cached_property
@@ -25,12 +26,14 @@ from PySide6.QtWidgets import (
     QFileDialog,
     QMenu,
     QWidget,
+    QScrollArea,
+    QSizePolicy,
 )
 from win32mica import MicaTheme, MicaStyle
 
 import config
 import wallpapers
-from wallpapers import cache_images, get_cached_images
+from wallpapers import cache_images, get_cached_images, Size
 
 
 class ContextMenu(QMenu):
@@ -39,7 +42,9 @@ class ContextMenu(QMenu):
 
         self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
-        self.setStyleSheet(config.ContextMenuStyleSheet)
+        self.setStyleSheet(
+            "background-color: rgba(7, 15, 43, 90%);" "border-radius: 4px;" "font-size: 14px;" "padding: 5px 0px;"
+        )
 
         # open wallpaper
         self.action_open = QAction("打开", self)
@@ -151,54 +156,94 @@ class ImageLabel(QLabel):
 
 
 class ImagesWidget(QWidget):
-    def __init__(self, size=QSize(int(192 * 1.25), int(108 * 1.25))) -> None:
+    def __init__(self, columns: int = 4, rows: int = 4, img_size: Size = Size(240, 135)) -> None:
         super().__init__()
+
+        self._columns = columns
+        self._rows = rows
+        self.img_size = img_size
 
         layout = QGridLayout(self)
         layout.setSpacing(30)
-        layout.setContentsMargins(50, 40, 50, 40)
+        layout.setContentsMargins(50, 30, 50, 30)
+
+        self._layout = layout
 
         cache_images()
-        images = list(get_cached_images())
+        self.images = list(get_cached_images())
+        self.image_labels = [ImageLabel(img) for img in self.images]
 
-        count = self.calc_count(len(images))
-        for i, x in enumerate(images):
-            layout.addWidget(ImageLabel(x), i // count, i % count)
+        self.layout_images()
 
-        width = (
-            size.width() * layout.columnCount()
-            + layout.spacing() * (layout.columnCount() - 1)
-            + layout.contentsMargins().left()
-            + layout.contentsMargins().right()
+    @property
+    def columns(self) -> int:
+        return self._columns if self._columns >= 1 else 1
+
+    @property
+    def rows(self) -> int:
+        return math.ceil(len(self.image_labels) / self.columns)
+
+    @property
+    def full_width(self) -> int:
+        margin = self._layout.contentsMargins()
+        return (
+            margin.left()
+            + margin.right()
+            + self.columns * self.img_size.width
+            + (self.columns - 1) * self._layout.spacing()
         )
-        height = (
-            size.height() * layout.rowCount()
-            + layout.contentsMargins().top()
-            + layout.contentsMargins().bottom()
-            + layout.spacing() * (layout.rowCount() - 1)
+
+    @property
+    def full_height(self) -> int:
+        margin = self._layout.contentsMargins()
+        return (
+            margin.top() + margin.bottom() + self.rows * self.img_size.height + (self.rows - 1) * self._layout.spacing()
         )
 
-        if layout.count() == 0:
-            label = QLabel("Nothing")
-            label.setObjectName("Warning")
-            label.setFixedSize(label.sizeHint())
-            layout.addWidget(label, 0, 0)
+    @property
+    def proper_width(self) -> int:
+        return self.full_width
 
-        self.setFixedSize(width, height)
+    @property
+    def proper_height(self) -> int:
+        margin = self._layout.contentsMargins()
+        return (
+            margin.top()
+            + margin.bottom()
+            + self._rows * self.img_size.height
+            + (self._rows - 1) * self._layout.spacing()
+        )
 
-    @staticmethod
-    def calc_count(target) -> int:
-        """Calculate the widgets every row"""
-        number = 1
-        count = 2
+    @property
+    def min_width(self) -> int:
+        margin = self._layout.contentsMargins()
+        return margin.left() + margin.right() + self.img_size.width
 
-        # sequence: [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, ...]
-        for i in range(1, target + 1):
-            if i == count + 1:
-                number += 1
-                count += 2 * number
+    @property
+    def min_height(self) -> int:
+        margin = self._layout.contentsMargins()
+        return margin.top() + margin.bottom() + self.img_size.height
 
-        return number
+    def layout_images(self) -> None:
+        for label in self.image_labels:
+            self._layout.removeWidget(label)
+
+        for i, label in enumerate(self.image_labels):
+            self._layout.addWidget(label, i // self.columns, i % self.columns)
+
+        self.setFixedSize(self.full_width, self.full_height)
+
+    def relayout_images(self, size: Size) -> None:
+        margin = self._layout.contentsMargins()
+        new_columns = (size.width - margin.left() - margin.right() + self._layout.spacing()) // (
+            self.img_size.width + self._layout.spacing()
+        )
+
+        if new_columns == self._columns:
+            return
+
+        self._columns = new_columns
+        self.layout_images()
 
 
 class MainWindow(QWidget):
@@ -207,27 +252,41 @@ class MainWindow(QWidget):
 
         self.setWindowTitle(config.AppName)
 
-        self._layout = QVBoxLayout(self)
-        self._layout.setSpacing(0)
-        self._layout.setContentsMargins(0, 0, 0, 0)
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        scroll_area.setStyleSheet("background-color: transparent; border: none;")
 
         self.images_widget = ImagesWidget()
-        self._layout.addWidget(self.images_widget)
+        scroll_area.setWidget(self.images_widget)
+        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll_area.setContentsMargins(0, 0, 0, 0)
 
-        self.setFixedSize(self.images_widget.size())
+        layout = QVBoxLayout(self)
+        layout.setSpacing(0)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(scroll_area)
+
+        self.setMinimumWidth(self.images_widget.min_width)
+        self.setMinimumHeight(self.images_widget.min_height)
+        self.resize(self.images_widget.proper_width, self.images_widget.proper_height)
 
     def apply_mica(self) -> None:
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
 
         win32mica.ApplyMica(HWND=self.winId(), Theme=MicaTheme.DARK, Style=MicaStyle.DEFAULT)
 
+    def resizeEvent(self, event):
+        self.images_widget.relayout_images(Size(event.size().width(), event.size().height()))
+
 
 class App:
-    icon_path = "./assets/xpic.png"
-
     def __init__(self) -> None:
         self._app = QApplication(sys.argv)
-        self._app.setWindowIcon(QIcon(self.icon_path))
+        self._app.setWindowIcon(QIcon(config.IconPath))
+
+        with open(config.QSSPath, "r", encoding="utf-8") as f:
+            self._app.setStyleSheet(f.read())
 
         self._window = MainWindow()
 
