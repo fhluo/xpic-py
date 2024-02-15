@@ -5,6 +5,7 @@ from functools import cached_property
 from pathlib import Path
 from shutil import copyfile
 
+import cv2
 import win32mica
 from PySide6.QtCore import Qt, QMimeData, QUrl, QPoint
 from PySide6.QtGui import (
@@ -60,8 +61,8 @@ class ContextMenu(QMenu):
         self.popup(QCursor.pos())
 
 
-def get_rounded_pixmap(path: str | os.PathLike, radius: int) -> QPixmap:
-    original = QPixmap(path)
+def get_rounded_pixmap(img: str | os.PathLike | QPixmap, radius: int) -> QPixmap:
+    original = img if isinstance(img, QPixmap) else QPixmap(img)
 
     rounded = QPixmap(original.size())
     rounded.fill(QColor(0, 0, 0, 0))
@@ -73,6 +74,23 @@ def get_rounded_pixmap(path: str | os.PathLike, radius: int) -> QPixmap:
     painter.drawRoundedRect(original.rect(), radius, radius)
 
     return rounded
+
+
+def get_brighter_image(path: str | os.PathLike, value: int) -> QPixmap:
+    img = cv2.imread(str(path))
+
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    h, s, v = cv2.split(hsv)
+
+    limit = 255 - value
+    v[v > limit] = 255
+    v[v <= limit] += value
+
+    hsv = cv2.merge((h, s, v))
+    img = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+
+    height, width, channel = img.shape
+    return QPixmap.fromImage(QImage(img.data, width, height, 3 * width, QImage.Format.Format_BGR888))
 
 
 class ImageLabel(QLabel):
@@ -91,7 +109,12 @@ class ImageLabel(QLabel):
         return get_rounded_pixmap(self.path, 50)
 
     @cached_property
+    def brighter_pixmap(self) -> QPixmap:
+        return get_rounded_pixmap(get_brighter_image(self.path, 15), 50)
+
+    @cached_property
     def grabbed_pixmap(self) -> QPixmap:
+        self.setPixmap(self.rounded_pixmap)
         return self.grab()
 
     def open(self) -> None:
@@ -111,14 +134,16 @@ class ImageLabel(QLabel):
     def set_as_desktop_wallpaper(self) -> None:
         wallpapers.set_desktop_wallpaper(self.path)
 
-    def mouseDoubleClickEvent(self, event) -> None:
-        super().mouseDoubleClickEvent(event)
+    def enterEvent(self, event):
+        self.setPixmap(self.brighter_pixmap)
 
+    def leaveEvent(self, event):
+        self.setPixmap(self.rounded_pixmap)
+
+    def mouseDoubleClickEvent(self, event) -> None:
         self.open()
 
     def contextMenuEvent(self, event) -> None:
-        super().contextMenuEvent(event)
-
         menu = ContextMenu(self)
         menu.action_open.triggered.connect(self.open)
         menu.action_save.triggered.connect(self.save)
