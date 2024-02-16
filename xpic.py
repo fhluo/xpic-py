@@ -47,15 +47,15 @@ class ContextMenu(QMenu):
         )
 
         # open wallpaper
-        self.action_open = QAction("打开", self)
+        self.action_open = QAction("Open", self)
         self.addAction(self.action_open)
 
         # save wallpaper
-        self.action_save = QAction("保存", self)
+        self.action_save = QAction("Save", self)
         self.addAction(self.action_save)
 
         # set as desktop wallpaper
-        self.action_set_as_desktop_wallpaper = QAction("设为桌面壁纸", self)
+        self.action_set_as_desktop_wallpaper = QAction("Set as desktop wallpaper", self)
         self.addAction(self.action_set_as_desktop_wallpaper)
 
         self.popup(QCursor.pos())
@@ -123,13 +123,15 @@ class ImageLabel(QLabel):
     def save(self) -> None:
         filename, _ = QFileDialog.getSaveFileName(
             parent=self,
-            caption="保存",
+            caption="Save Wallpaper",
             dir=str(Path().home() / "Pictures"),
-            filter="*.jpg",
+            filter="Image Files (*.png *.jpg)",
         )
 
-        if filename != "":
-            copyfile(self.path, filename)
+        if filename == "":
+            return
+
+        copyfile(self.path, Path(filename).with_suffix(self.path.suffix))
 
     def set_as_desktop_wallpaper(self) -> None:
         wallpapers.set_desktop_wallpaper(self.path)
