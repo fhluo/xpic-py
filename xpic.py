@@ -311,7 +311,7 @@ class MainWindow(QWidget):
 class App:
     def __init__(self) -> None:
         self._app = QApplication(sys.argv)
-        self._app.setWindowIcon(QIcon(config.IconPath))
+        self._app.setWindowIcon(QIcon(str(config.IconPath)))
 
         with open(config.QSSPath, "r", encoding="utf-8") as f:
             self._app.setStyleSheet(f.read())
