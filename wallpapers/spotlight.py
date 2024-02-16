@@ -22,9 +22,17 @@ class Image:
     def info(self) -> ImageInfo:
         return get_image_info(self.path)
 
+    @property
+    def suffix(self) -> str:
+        match self.info.format.lower():
+            case "jpeg":
+                return ".jpg"
+            case _:
+                return f".{self.info.format.lower()}"
+
     def save(self, dst: str | os.PathLike) -> None:
         # add suffix
-        dst = (Path(dst) / self.path.name).with_suffix(f".{self.info.format.lower()}")
+        dst = (Path(dst) / self.path.name).with_suffix(self.suffix)
 
         # copy image
         if not dst.exists():
