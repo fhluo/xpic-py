@@ -16,13 +16,21 @@ tasks:
   run:
     cmd: poetry run python xpic.py
 
-  bundle-cli:
+  gen:
     cmds:
-      - poetry run pyinstaller --onefile xpic-cli.py
+      - poetry run python assets/gen_ico.py
+
+  bundle-cli:
+    deps:
+      - gen
+    cmds:
+      - poetry run pyinstaller --onefile --icon=assets/xpic.ico xpic-cli.py
 
   bundle-gui:
+    deps:
+      - gen
     cmds:
-      - poetry run pyinstaller --add-data "assets/xpic.png:assets"  --add-data "assets/xpic.qss:assets" --onefile --windowed xpic.py
+      - poetry run pyinstaller --add-data "assets/xpic.png:assets"  --add-data "assets/xpic.qss:assets" --onefile --icon=assets/xpic.ico --windowed xpic.py
 
   bundle:
     deps:

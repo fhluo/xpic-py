@@ -2,6 +2,7 @@
 /.ruff_cache/
 /dist/
 /build/
+/assets/xpic.ico
 
 __pycache__/
 *.spec
