@@ -2,9 +2,11 @@
 name = "xpic"
 version = "0.1.0"
 edition = "2021"
+description = "Manage wallpapers from Windows Spotlight and Bing"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+clap = { version = "4.5.1", features = ["derive"] }
 glob = "0.3.1"
 image = "0.24.8"
