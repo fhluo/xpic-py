@@ -274,7 +274,10 @@ class ImagesWidget(QWidget):
         self.layout_images()
 
     async def cahche_images_async(self) -> None:
-        cache_images()
+        try:
+            cache_images()
+        except (Exception,):
+            return
 
         self.remove_image_labels()
         self.images = list(get_cached_images())
