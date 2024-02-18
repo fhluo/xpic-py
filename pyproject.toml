@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "xpic"
-version = "0.1.1"
+version = "0.1.2"
 description = "Show wallpapers from Windows Spotlight and Bing"
 license = "MIT"
 authors = ["fhluo <20843637+fhluo@users.noreply.github.com>"]
