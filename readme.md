@@ -2,7 +2,7 @@
 
 # Xpic
 
-Show wallpapers from Windows Spotlight and Bing
+Save wallpapers from Windows Spotlight and Bing
 
 ![xpic](assets/screenshot.png)
 
