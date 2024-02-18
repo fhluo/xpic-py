@@ -3,6 +3,7 @@
 /dist/
 /build/
 /assets/xpic.ico
+/.fleet/
 
 __pycache__/
 *.spec

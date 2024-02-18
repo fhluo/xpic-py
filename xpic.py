@@ -1,3 +1,4 @@
+import asyncio
 import math
 import os
 import sys
@@ -192,13 +193,7 @@ class ImagesWidget(QWidget):
         layout = QGridLayout(self)
         layout.setSpacing(30)
         layout.setContentsMargins(50, 30, 50, 30)
-
         self._layout = layout
-
-        try:
-            cache_images()
-        except (Exception,):
-            pass
 
         self.images = list(get_cached_images())
         self.image_labels = [ImageLabel(img) for img in self.images]
@@ -254,9 +249,12 @@ class ImagesWidget(QWidget):
         margin = self._layout.contentsMargins()
         return margin.top() + margin.bottom() + self.img_size.height
 
-    def layout_images(self) -> None:
+    def remove_image_labels(self) -> None:
         for label in self.image_labels:
             self._layout.removeWidget(label)
+
+    def layout_images(self) -> None:
+        self.remove_image_labels()
 
         for i, label in enumerate(self.image_labels):
             self._layout.addWidget(label, i // self.columns, i % self.columns)
@@ -273,6 +271,15 @@ class ImagesWidget(QWidget):
             return
 
         self._columns = new_columns
+        self.layout_images()
+
+    async def cahche_images_async(self) -> None:
+        cache_images()
+
+        self.remove_image_labels()
+        self.images = list(get_cached_images())
+        self.image_labels = [ImageLabel(img) for img in self.images]
+
         self.layout_images()
 
 
@@ -318,13 +325,21 @@ class App:
         with open(config.QSSPath, "r", encoding="utf-8") as f:
             self._app.setStyleSheet(f.read())
 
-        self._window = MainWindow()
+        self.window = MainWindow()
 
     def run(self) -> None:
-        self._window.apply_mica()
-        self._window.show()
+        self.window.apply_mica()
+        self.window.show()
         self._app.exec()
 
 
+async def main():
+    app = App()
+    task = asyncio.create_task(app.window.images_widget.cahche_images_async())
+
+    app.run()
+    await task
+
+
 if __name__ == "__main__":
-    App().run()
+    asyncio.run(main())
