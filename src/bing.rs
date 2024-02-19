@@ -1,5 +1,8 @@
+use crate::util;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
+use std::path::Path;
+use tokio::task;
 use url::Url;
 
 #[derive(Serialize)]
@@ -48,4 +51,24 @@ pub async fn query(index: usize, number: usize) -> Result<Vec<Url>, Box<dyn Erro
         .collect::<Vec<_>>();
 
     Ok(urls)
+}
+
+pub async fn get_images() -> Result<Vec<Url>, Box<dyn Error>> {
+    Ok(query(0, 8).await?)
+}
+
+/// Copies images to a specified directory.
+pub async fn copy_images_to<P: AsRef<Path>>(dst: P) -> Result<(), Box<dyn Error>> {
+    let tasks = get_images().await?.into_iter().map(|url| {
+        let dst = dst.as_ref().to_owned();
+
+        task::spawn(async move {
+            util::download_file(&url, dst).await.unwrap_or_else(|e| {
+                eprintln!("failed to download {url}: {e}");
+            })
+        })
+    });
+
+    futures::future::join_all(tasks).await;
+    Ok(())
 }

@@ -1,11 +1,10 @@
-use crate::bing::query;
 use clap::{Parser, Subcommand};
 use std::error::Error;
 use std::path::PathBuf;
 
 mod bing;
-mod image_util;
 mod spotlight;
+mod util;
 
 #[derive(Parser)]
 #[command(version, about, arg_required_else_help(true))]
@@ -51,7 +50,7 @@ async fn list_wallpapers(spotlight: bool, bing: bool) -> Result<(), Box<dyn Erro
     }
 
     if all || bing {
-        query(0, 8)
+        bing::get_images()
             .await?
             .into_iter()
             .for_each(|u| println!("{}", u));
@@ -64,9 +63,11 @@ async fn save_wallpapers(dir: &PathBuf, spotlight: bool, bing: bool) -> Result<(
     let all = !(spotlight || bing);
 
     if all || spotlight {
-        spotlight::copy_images_to(dir, true)?;
+        spotlight::copy_images_to(dir)?;
     }
-    if all || bing {}
+    if all || bing {
+        bing::copy_images_to(dir).await?;
+    }
 
     Ok(())
 }

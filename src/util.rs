@@ -1,10 +1,11 @@
 use image::io::{Reader as ImageReader, Reader};
 use image::{DynamicImage, ImageFormat};
 use std::error::Error;
-use std::fs;
 use std::fs::File;
 use std::io::BufReader;
 use std::path::{Path, PathBuf};
+use std::{fs, io};
+use url::Url;
 
 fn new_image_reader<P: AsRef<Path>>(path: P) -> Result<Reader<BufReader<File>>, Box<dyn Error>> {
     let file = match File::open(&path) {
@@ -40,7 +41,7 @@ pub fn get_image_format<P: AsRef<Path>>(path: P) -> Result<ImageFormat, Box<dyn 
 }
 
 /// Copies image from src to dst.
-pub fn copy<P: AsRef<Path>, Q: AsRef<Path>>(
+pub fn copy_image<P: AsRef<Path>, Q: AsRef<Path>>(
     src: P,
     dst: Q,
     set_extension: bool,
@@ -66,5 +67,19 @@ pub fn copy<P: AsRef<Path>, Q: AsRef<Path>>(
     }
 
     fs::copy(src, dst)?;
+    Ok(())
+}
+
+pub async fn download_file<P: AsRef<Path>>(url: &Url, dst: P) -> Result<(), Box<dyn Error>> {
+    let resp = reqwest::get(url.as_ref()).await?;
+
+    if !resp.status().is_success() {
+        return Err(format!("failed to download file from {url}").into());
+    }
+
+    let mut file = File::create(dst)?;
+    let content = resp.bytes().await?;
+    io::copy(&mut content.as_ref(), &mut file)?;
+
     Ok(())
 }
