@@ -1,4 +1,6 @@
+use crate::bing::query;
 use clap::{Parser, Subcommand};
+use std::error::Error;
 use std::path::PathBuf;
 
 mod bing;
@@ -39,40 +41,50 @@ enum Commands {
     },
 }
 
-fn list_wallpapers(spotlight: bool, bing: bool) {
-    let all = !spotlight && !bing;
+async fn list_wallpapers(spotlight: bool, bing: bool) -> Result<(), Box<dyn Error>> {
+    let all = !(spotlight || bing);
 
     if all || spotlight {
-        spotlight::get_images()
-            .unwrap()
+        spotlight::get_images()?
             .into_iter()
             .for_each(|path| println!("{}", path.display()));
     }
 
-    if all || bing {}
+    if all || bing {
+        query(0, 8)
+            .await?
+            .into_iter()
+            .for_each(|u| println!("{}", u));
+    }
+
+    Ok(())
 }
 
-fn save_wallpapers(dir: &PathBuf, spotlight: bool, bing: bool) {
-    let all = !spotlight && !bing;
+async fn save_wallpapers(dir: &PathBuf, spotlight: bool, bing: bool) -> Result<(), Box<dyn Error>> {
+    let all = !(spotlight || bing);
 
     if all || spotlight {
-        spotlight::copy_images_to(dir, true).unwrap()
+        spotlight::copy_images_to(dir, true)?;
     }
     if all || bing {}
+
+    Ok(())
 }
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<(), Box<dyn Error>> {
     let cli = CLI::parse();
 
     if let Some(command) = &cli.command {
         match command {
-            Commands::List { spotlight, bing } => list_wallpapers(*spotlight, *bing),
+            Commands::List { spotlight, bing } => list_wallpapers(*spotlight, *bing).await?,
             Commands::Save {
                 dir,
                 spotlight,
                 bing,
-            } => save_wallpapers(dir, *spotlight, *bing),
+            } => save_wallpapers(dir, *spotlight, *bing).await?,
         }
     }
+
+    Ok(())
 }

@@ -2,7 +2,7 @@
 name = "xpic"
 version = "0.1.0"
 edition = "2021"
-description = "Manage wallpapers from Windows Spotlight and Bing"
+description = "Save wallpapers from Windows Spotlight and Bing"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -10,3 +10,8 @@ description = "Manage wallpapers from Windows Spotlight and Bing"
 clap = { version = "4.5.1", features = ["derive"] }
 glob = "0.3.1"
 image = "0.24.8"
+reqwest = { version = "0.11.24", features = ["json"] }
+serde = { version = "1.0.196", features = ["derive"] }
+serde_json = "1.0.113"
+tokio = { version = "1.36.0", features = ["full"] }
+url = "2.5.0"
