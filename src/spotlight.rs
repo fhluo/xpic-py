@@ -2,7 +2,7 @@ use std::error::Error;
 use std::{env, fs};
 
 use image::GenericImageView;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use crate::image_util;
 
@@ -51,33 +51,18 @@ pub fn get_images() -> Result<Vec<PathBuf>, Box<dyn Error>> {
 }
 
 /// Copies images to a specified directory.
-pub fn copy_images_to(dir: &PathBuf, with_extension: bool) -> Result<(), Box<dyn Error>> {
+pub fn copy_images_to<P: AsRef<Path>>(dir: P, set_extension: bool) -> Result<(), Box<dyn Error>> {
     if let Err(err) = fs::create_dir_all(&dir) {
-        return Err(format!("failed to create {}: {}", dir.display(), err).into());
+        return Err(format!("failed to create {}: {}", dir.as_ref().display(), err).into());
     }
 
     match get_images() {
         Ok(images) => images.into_iter().for_each(|path| {
-            let format = match image_util::get_image_format(&path) {
-                Some(format) => format,
-                None => return,
-            };
-
-            let extension = match format.extensions_str().first() {
-                Some(extension) => extension,
-                None => return,
-            };
-
-            let mut dst = dir.join(&path.file_name().unwrap());
-            if with_extension {
-                dst = dst.with_extension(extension)
-            }
-
-            if let Err(err) = fs::copy(&path, &dst) {
+            if let Err(err) = image_util::copy(&path, dir.as_ref(), set_extension) {
                 eprintln!(
-                    "failed to copy {} to {}: {}",
+                    "failed to copy image from {} to {}: {}",
                     path.display(),
-                    dst.display(),
+                    dir.as_ref().display(),
                     err
                 )
             }

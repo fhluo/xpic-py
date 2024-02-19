@@ -5,7 +5,7 @@ use url::Url;
 #[derive(Serialize)]
 struct Query {
     format: &'static str,
-    #[serde(rename ="idx")]
+    #[serde(rename = "idx")]
     index: usize,
     #[serde(rename = "n")]
     number: usize,
@@ -22,7 +22,11 @@ struct ImagesResponse {
 }
 
 pub async fn query(index: usize, number: usize) -> Result<Vec<Url>, Box<dyn Error>> {
-    let query = Query { format: "js", index, number };
+    let query = Query {
+        format: "js",
+        index,
+        number,
+    };
 
     let resp = reqwest::Client::new()
         .get("https://cn.bing.com/HPImageArchive.aspx")
