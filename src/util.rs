@@ -47,7 +47,7 @@ pub fn copy_image<P: AsRef<Path>, Q: AsRef<Path>>(
     set_extension: bool,
 ) -> Result<(), Box<dyn Error>> {
     if dst.as_ref().exists() {
-        return Ok(())
+        return Ok(());
     }
 
     let mut dst = PathBuf::from(dst.as_ref());
@@ -76,7 +76,7 @@ pub fn copy_image<P: AsRef<Path>, Q: AsRef<Path>>(
 
 pub async fn download_file<P: AsRef<Path>>(url: &Url, dst: P) -> Result<(), Box<dyn Error>> {
     if dst.as_ref().exists() {
-        return Ok(())
+        return Ok(());
     }
 
     let resp = reqwest::get(url.as_ref()).await?;

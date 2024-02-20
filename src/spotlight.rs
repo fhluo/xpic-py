@@ -59,7 +59,7 @@ pub fn copy_images_to<P: AsRef<Path>>(dst: P) -> Result<(), Box<dyn Error>> {
     match get_images() {
         Ok(images) => images.into_iter().for_each(|path| {
             if dst.as_ref().exists() {
-                return
+                return;
             }
 
             if let Err(err) = util::copy_image(&path, dst.as_ref(), true) {

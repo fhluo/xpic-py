@@ -1,6 +1,5 @@
 use clap::{Parser, Subcommand};
-use std::error::Error;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 mod bing;
 mod spotlight;
@@ -40,52 +39,91 @@ enum Commands {
     },
 }
 
-async fn list_wallpapers(spotlight: bool, bing: bool) -> Result<(), Box<dyn Error>> {
-    let all = !(spotlight || bing);
-
-    if all || spotlight {
-        spotlight::get_images()?
-            .into_iter()
-            .for_each(|path| println!("{}", path.display()));
+fn list_spotlight_wallpapers() {
+    match spotlight::get_images() {
+        Ok(images) => {
+            images.into_iter().for_each(|path| println!("{}", path.display()))
+        }
+        Err(e) => eprintln!("failed to get Windows Spotlight wallpapers: {}", e),
     }
-
-    if all || bing {
-        bing::get_images()
-            .await?
-            .into_iter()
-            .for_each(|u| println!("{}", u));
-    }
-
-    Ok(())
 }
 
-async fn save_wallpapers(dir: &PathBuf, spotlight: bool, bing: bool) -> Result<(), Box<dyn Error>> {
+async fn list_bing_wallpapers() {
+    match bing::get_images().await {
+        Ok(images) => images.into_iter().for_each(|u| println!("{}", u)),
+        Err(e) => eprintln!("failed to get Bing wallpapers: {}", e),
+    }
+}
+
+async fn list_wallpapers(spotlight: bool, bing: bool) {
     let all = !(spotlight || bing);
 
-    if all || spotlight {
-        spotlight::copy_images_to(dir)?;
-    }
-    if all || bing {
-        bing::copy_images_to(dir).await?;
-    }
+    futures::future::join_all(
+        vec![
+            if all || spotlight {
+                Some(tokio::spawn(async { list_spotlight_wallpapers() }))
+            } else {
+                None
+            },
+            if all || bing {
+                Some(tokio::spawn(list_bing_wallpapers()))
+            } else {
+                None
+            },
+        ].into_iter().filter_map(|handle| handle)
+    ).await;
+}
 
-    Ok(())
+fn save_spotlight_wallpapers<P: AsRef<Path>>(dir: P) {
+    if let Err(e) = spotlight::copy_images_to(dir.as_ref()) {
+        eprintln!(
+            "failed to copy Windows Spotlight wallpapers to {}:{}",
+            dir.as_ref().display(),
+            e
+        );
+    }
+}
+
+async fn save_bing_wallpapers<P: AsRef<Path>>(dir: P) {
+    if let Err(e) = bing::copy_images_to(&dir).await {
+        eprintln!("failed to copy Bing wallpapers to {}:{}", dir.as_ref().display(), e);
+    }
+}
+
+
+async fn save_wallpapers(dir: &PathBuf, spotlight: bool, bing: bool) {
+    let all = !(spotlight || bing);
+
+    futures::future::join_all(
+        vec![
+            if all || spotlight {
+                let dir = dir.to_owned();
+                Some(tokio::spawn(async { save_spotlight_wallpapers(dir) }))
+            } else {
+                None
+            },
+            if all || bing {
+                let dir = dir.to_owned();
+                Some(tokio::spawn(save_bing_wallpapers(dir)))
+            } else {
+                None
+            },
+        ].into_iter().filter_map(|handle| handle)
+    ).await;
 }
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>> {
+async fn main() {
     let cli = CLI::parse();
 
     if let Some(command) = &cli.command {
         match command {
-            Commands::List { spotlight, bing } => list_wallpapers(*spotlight, *bing).await?,
+            Commands::List { spotlight, bing } => list_wallpapers(*spotlight, *bing).await,
             Commands::Save {
                 dir,
                 spotlight,
                 bing,
-            } => save_wallpapers(dir, *spotlight, *bing).await?,
+            } => save_wallpapers(dir, *spotlight, *bing).await,
         }
     }
-
-    Ok(())
 }

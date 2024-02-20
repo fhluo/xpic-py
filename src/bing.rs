@@ -2,7 +2,6 @@ use crate::util;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 use std::path::Path;
-use tokio::task;
 use url::Url;
 
 #[derive(Serialize)]
@@ -59,14 +58,14 @@ pub async fn get_images() -> Result<Vec<Url>, Box<dyn Error>> {
 
 /// Copies images to a specified directory.
 pub async fn copy_images_to<P: AsRef<Path>>(dst: P) -> Result<(), Box<dyn Error>> {
-    let tasks = get_images().await?.into_iter().filter_map(|url|
+    let tasks = get_images().await?.into_iter().filter_map(|url| {
         if let Some(id) = url.query_pairs().find(|(key, _)| key == "id") {
             let dst = dst.as_ref().join(id.1.into_owned());
             if dst.exists() {
                 return None;
             }
 
-            Some(task::spawn(async move {
+            Some(tokio::spawn(async move {
                 util::download_file(&url, dst).await.unwrap_or_else(|e| {
                     eprintln!("failed to download {url}: {e}");
                 })
@@ -75,7 +74,7 @@ pub async fn copy_images_to<P: AsRef<Path>>(dst: P) -> Result<(), Box<dyn Error>
             eprintln!("The query parameter id to be used as filename does not exist.");
             None
         }
-    );
+    });
 
     futures::future::join_all(tasks).await;
     Ok(())
