@@ -59,15 +59,23 @@ pub async fn get_images() -> Result<Vec<Url>, Box<dyn Error>> {
 
 /// Copies images to a specified directory.
 pub async fn copy_images_to<P: AsRef<Path>>(dst: P) -> Result<(), Box<dyn Error>> {
-    let tasks = get_images().await?.into_iter().map(|url| {
-        let dst = dst.as_ref().to_owned();
+    let tasks = get_images().await?.into_iter().filter_map(|url|
+        if let Some(id) = url.query_pairs().find(|(key, _)| key == "id") {
+            let dst = dst.as_ref().join(id.1.into_owned());
+            if dst.exists() {
+                return None;
+            }
 
-        task::spawn(async move {
-            util::download_file(&url, dst).await.unwrap_or_else(|e| {
-                eprintln!("failed to download {url}: {e}");
-            })
-        })
-    });
+            Some(task::spawn(async move {
+                util::download_file(&url, dst).await.unwrap_or_else(|e| {
+                    eprintln!("failed to download {url}: {e}");
+                })
+            }))
+        } else {
+            eprintln!("The query parameter id to be used as filename does not exist.");
+            None
+        }
+    );
 
     futures::future::join_all(tasks).await;
     Ok(())
