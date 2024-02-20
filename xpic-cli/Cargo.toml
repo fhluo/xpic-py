@@ -4,15 +4,8 @@ version = "0.1.0"
 edition = "2021"
 description = "Save wallpapers from Windows Spotlight and Bing"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
+xpic = { path = "../xpic" }
 clap = { version = "4.5.1", features = ["derive"] }
 futures = "0.3.30"
-glob = "0.3.1"
-image = "0.24.8"
-reqwest = { version = "0.11.24", features = ["json"] }
-serde = { version = "1.0.197", features = ["derive"] }
-serde_json = "1.0.114"
 tokio = { version = "1.36.0", features = ["full"] }
-url = "2.5.0"

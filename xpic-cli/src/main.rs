@@ -1,9 +1,6 @@
 use clap::{Parser, Subcommand};
 use std::path::{Path, PathBuf};
-
-mod bing;
-mod spotlight;
-mod util;
+use xpic::{bing, spotlight};
 
 #[derive(Parser)]
 #[command(version, about, arg_required_else_help(true))]

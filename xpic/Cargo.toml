@@ -1,0 +1,14 @@
+[package]
+name = "xpic"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+futures = "0.3.30"
+glob = "0.3.1"
+image = "0.24.8"
+reqwest = { version = "0.11.24", features = ["json"] }
+serde = { version = "1.0.197", features = ["derive"] }
+serde_json = "1.0.114"
+tokio = { version = "1.36.0", features = ["full"] }
+url = "2.5.0"
