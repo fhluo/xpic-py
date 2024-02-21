@@ -1,4 +1,8 @@
 import { convertFileSrc, invoke } from "@tauri-apps/api/tauri";
+import "lightgallery/css/lightgallery-bundle.css";
+import lgThumbnail from "lightgallery/plugins/thumbnail";
+import lgZoom from "lightgallery/plugins/zoom";
+import LightGallery from "lightgallery/react";
 import { useEffect, useState } from "react";
 import "./app.css";
 
@@ -11,11 +15,29 @@ function App() {
 		);
 	}, []);
 
+	const getName = (path: string): string => {
+		const match = path.trim().match(/[^/\\]+$/);
+		return match ? match[0] : "";
+	};
+
 	return (
 		<>
-			{wallpapers.map((v) => (
-				<img src={convertFileSrc(v)} alt={v} />
-			))}
+			<LightGallery
+				plugins={[lgZoom, lgThumbnail]}
+				speed={500}
+				thumbnail={true}
+			>
+				{wallpapers.map((v) => (
+					<a href={convertFileSrc(v)}>
+						<img
+							src={convertFileSrc(v)}
+							alt={getName(v)}
+							width={240}
+							height={135}
+						/>
+					</a>
+				))}
+			</LightGallery>
 		</>
 	);
 }
