@@ -1,21 +1,22 @@
+import { convertFileSrc, invoke } from "@tauri-apps/api/tauri";
+import { useEffect, useState } from "react";
 import "./app.css";
-import {invoke} from "@tauri-apps/api/tauri";
-import {useEffect, useState} from "react";
 
 function App() {
-	const [wallpapers, setWallpapers] = useState<string[]>([])
-
+	const [wallpapers, setWallpapers] = useState<string[]>([]);
 
 	useEffect(() => {
-		invoke<string[]>("get_wallpapers").then(r => setWallpapers(r))
-	}, [])
-
-
+		invoke<string[]>("get_wallpapers").then((wallpapers) =>
+			setWallpapers(wallpapers),
+		);
+	}, []);
 
 	return (
-		<>{
-			wallpapers.map(v => <p>{v}</p>)
-		}</>
+		<>
+			{wallpapers.map((v) => (
+				<img src={convertFileSrc(v)} alt={v} />
+			))}
+		</>
 	);
 }
 

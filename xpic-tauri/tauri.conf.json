@@ -1,7 +1,7 @@
 {
   "build": {
     "beforeBuildCommand": "task build-web",
-    "beforeDevCommand": "task web-dev",
+    "beforeDevCommand": "task dev-web",
     "devPath": "http://localhost:1420",
     "distDir": "../xpic-web/dist"
   },
@@ -11,7 +11,12 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false
+      "protocol": {
+        "asset": true,
+        "assetScope": [
+          "$LOCALDATA/Xpic/Cache/**"
+        ]
+      }
     },
     "windows": [
       {
@@ -23,7 +28,7 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; img-src 'self' asset: https://asset.localhost"
     },
     "bundle": {
       "active": true,

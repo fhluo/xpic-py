@@ -11,6 +11,16 @@ tasks:
     cmds:
       - pnpm dev
 
+  check-web:
+    dir: xpic-web
+    cmds:
+      - pnpm check
+
+  format-web:
+    dir: xpic-web
+    cmds:
+      - pnpm format
+
   build:
     cmds:
       - cargo tauri build

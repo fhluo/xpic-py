@@ -5,7 +5,11 @@ use std::path::{PathBuf};
 use xpic::{bing, spotlight};
 
 fn get_cache_dir() -> PathBuf {
-    PathBuf::from(env::var("LocalAppData").unwrap()).join("Xpic\\Cache")
+    return if let Some(dir) = tauri::api::path::local_data_dir() {
+        dir.join("Xpic").join("Cache")
+    } else {
+        PathBuf::from("Cache")
+    }
 }
 
 async fn cache_images() {
