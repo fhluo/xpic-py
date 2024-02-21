@@ -6,7 +6,15 @@ tasks:
     cmds:
       - pnpm build
 
-  web-dev:
+  dev-web:
     dir: xpic-web
     cmds:
       - pnpm dev
+
+  build:
+    cmds:
+      - cargo tauri build
+
+  dev:
+    cmds:
+      - cargo tauri dev
