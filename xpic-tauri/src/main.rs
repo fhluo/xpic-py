@@ -1,7 +1,9 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use std::path::PathBuf;
 use std::{env, vec};
-use std::path::{PathBuf};
+use tauri::Manager;
+use window_vibrancy::apply_mica;
 use xpic::{bing, spotlight};
 
 fn get_cache_dir() -> PathBuf {
@@ -9,7 +11,7 @@ fn get_cache_dir() -> PathBuf {
         dir.join("Xpic").join("Cache")
     } else {
         PathBuf::from("Cache")
-    }
+    };
 }
 
 async fn cache_images() {
@@ -36,7 +38,8 @@ async fn cache_images() {
                 }
             })
         },
-    ]).await;
+    ])
+    .await;
 }
 
 fn get_cached_images() -> Vec<PathBuf> {
@@ -48,11 +51,10 @@ fn get_cached_images() -> Vec<PathBuf> {
         .collect::<Vec<_>>()
 }
 
-
 #[tauri::command]
 async fn get_wallpapers() -> Vec<String> {
     cache_images().await;
-    
+
     get_cached_images()
         .into_iter()
         .map(|path| path.to_string_lossy().to_string())
@@ -61,6 +63,18 @@ async fn get_wallpapers() -> Vec<String> {
 
 fn main() {
     tauri::Builder::default()
+        .setup(|app| {
+            let window = app.get_window("main").unwrap();
+
+            #[cfg(target_os = "windows")]
+            {
+                apply_mica(&window, Some(true))?;
+            }
+
+            window.set_decorations(true)?;
+
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![get_wallpapers])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
