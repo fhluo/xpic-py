@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 body {
-    @apply bg-transparent w-screen h-screen;
+    @apply bg-transparent w-screen h-screen overflow-hidden;
 }
 
 #root {
-    @apply w-screen h-screen;
+    @apply w-screen h-screen overflow-hidden;
 }
