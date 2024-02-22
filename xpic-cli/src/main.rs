@@ -38,9 +38,9 @@ enum Commands {
 
 fn list_spotlight_wallpapers() {
     match spotlight::get_images() {
-        Ok(images) => {
-            images.into_iter().for_each(|path| println!("{}", path.display()))
-        }
+        Ok(images) => images
+            .into_iter()
+            .for_each(|path| println!("{}", path.display())),
         Err(e) => eprintln!("failed to get Windows Spotlight wallpapers: {}", e),
     }
 }
@@ -67,8 +67,11 @@ async fn list_wallpapers(spotlight: bool, bing: bool) {
             } else {
                 None
             },
-        ].into_iter().filter_map(|handle| handle)
-    ).await;
+        ]
+        .into_iter()
+        .filter_map(|handle| handle),
+    )
+    .await;
 }
 
 fn save_spotlight_wallpapers<P: AsRef<Path>>(dir: P) {
@@ -83,10 +86,13 @@ fn save_spotlight_wallpapers<P: AsRef<Path>>(dir: P) {
 
 async fn save_bing_wallpapers<P: AsRef<Path>>(dir: P) {
     if let Err(e) = bing::copy_images_to(&dir).await {
-        eprintln!("failed to copy Bing wallpapers to {}:{}", dir.as_ref().display(), e);
+        eprintln!(
+            "failed to copy Bing wallpapers to {}:{}",
+            dir.as_ref().display(),
+            e
+        );
     }
 }
-
 
 async fn save_wallpapers(dir: &PathBuf, spotlight: bool, bing: bool) {
     let all = !(spotlight || bing);
@@ -105,8 +111,11 @@ async fn save_wallpapers(dir: &PathBuf, spotlight: bool, bing: bool) {
             } else {
                 None
             },
-        ].into_iter().filter_map(|handle| handle)
-    ).await;
+        ]
+        .into_iter()
+        .filter_map(|handle| handle),
+    )
+    .await;
 }
 
 #[tokio::main]
