@@ -19,6 +19,8 @@ function App() {
         invoke<string[]>("update_wallpapers").then((wallpapers) =>
             setWallpapers(wallpapers),
         );
+
+        document.addEventListener("contextmenu", event => event.preventDefault())
     }, []);
 
     const getName = (path: string): string => {
