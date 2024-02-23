@@ -53,12 +53,16 @@ fn get_cached_images() -> Vec<PathBuf> {
 
 #[tauri::command]
 async fn get_wallpapers() -> Vec<String> {
-    cache_images().await;
-
     get_cached_images()
         .into_iter()
         .map(|path| path.to_string_lossy().to_string())
         .collect::<Vec<_>>()
+}
+
+#[tauri::command]
+async fn update_wallpapers() -> Vec<String> {
+    cache_images().await;
+    get_wallpapers().await
 }
 
 fn main() {
@@ -75,7 +79,7 @@ fn main() {
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![get_wallpapers])
+        .invoke_handler(tauri::generate_handler![get_wallpapers, update_wallpapers])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

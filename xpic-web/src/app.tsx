@@ -15,6 +15,10 @@ function App() {
         invoke<string[]>("get_wallpapers").then((wallpapers) =>
             setWallpapers(wallpapers),
         );
+
+        invoke<string[]>("update_wallpapers").then((wallpapers) =>
+            setWallpapers(wallpapers),
+        );
     }, []);
 
     const getName = (path: string): string => {
