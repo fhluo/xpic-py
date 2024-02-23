@@ -5,12 +5,39 @@ use std::path::Path;
 use url::Url;
 
 #[derive(Serialize)]
-struct Query {
+pub struct Query {
     format: &'static str,
+
     #[serde(rename = "idx")]
     index: usize,
+
     #[serde(rename = "n")]
     number: usize,
+
+    #[serde(rename = "mkt", skip_serializing_if = "Option::is_none")]
+    market: Option<String>,
+}
+
+impl Query {
+    pub fn new(format: &'static str, index: usize, number: usize, market: Option<String>) -> Self {
+        Self {
+            format,
+            index,
+            number,
+            market
+        }
+    }
+}
+
+impl Default for Query {
+    fn default() -> Self {
+        Self {
+            format: "js",
+            index: 0,
+            number: 8,
+            market: None,
+        }
+    }
 }
 
 #[derive(Deserialize)]
@@ -23,13 +50,7 @@ struct ImagesResponse {
     images: Vec<ImageInfo>,
 }
 
-pub async fn query(index: usize, number: usize) -> Result<Vec<Url>, Box<dyn Error>> {
-    let query = Query {
-        format: "js",
-        index,
-        number,
-    };
-
+pub async fn query(query: Query) -> Result<Vec<Url>, Box<dyn Error>> {
     let resp = reqwest::Client::new()
         .get("https://cn.bing.com/HPImageArchive.aspx")
         .query(&query)
@@ -53,7 +74,7 @@ pub async fn query(index: usize, number: usize) -> Result<Vec<Url>, Box<dyn Erro
 }
 
 pub async fn get_images() -> Result<Vec<Url>, Box<dyn Error>> {
-    Ok(query(0, 8).await?)
+    Ok(query(Query::default()).await?)
 }
 
 /// Copies images to a specified directory.
