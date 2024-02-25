@@ -1,4 +1,5 @@
 use crate::util;
+use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 use std::path::Path;
@@ -24,7 +25,7 @@ impl Query {
             format,
             index,
             number,
-            market
+            market,
         }
     }
 }
@@ -42,6 +43,9 @@ impl Default for Query {
 
 #[derive(Deserialize)]
 struct ImageInfo {
+    #[serde(rename = "startdate")]
+    start_date: String,
+
     url: String,
 }
 
@@ -50,7 +54,107 @@ struct ImagesResponse {
     images: Vec<ImageInfo>,
 }
 
-pub async fn query(query: Query) -> Result<Vec<Url>, Box<dyn Error>> {
+pub struct Image {
+    url: Url,
+
+    start_date: String,
+}
+
+impl From<ImageInfo> for Image {
+    fn from(image_info: ImageInfo) -> Self {
+        Self {
+            url: Url::parse("https://cn.bing.com/")
+                .unwrap()
+                .join(image_info.url.as_str())
+                .unwrap(),
+            start_date: image_info.start_date,
+        }
+    }
+}
+
+pub struct ParsedID {
+    pub name: String,
+    pub market: String,
+    pub number: usize,
+    pub width: usize,
+    pub height: usize,
+    pub extension: String,
+}
+
+impl Default for ParsedID {
+    fn default() -> Self {
+        Self {
+            name: String::default(),
+            market: String::default(),
+            number: 0,
+            width: 0,
+            height: 0,
+            extension: String::default(),
+        }
+    }
+}
+
+impl From<&str> for ParsedID {
+    fn from(id: &str) -> Self {
+        let re = Regex::new(
+            r"(?x)
+^OHR
+\.
+(?P<name>\w+)
+_
+(?P<market>ROW|\w{2}-\w{2})
+(?P<number>\d+)
+_
+(?P<width>\d+)
+x
+(?P<height>\d+)
+\.
+(?P<extension>\w+)$",
+        )
+        .unwrap();
+
+        match re.captures(id) {
+            Some(captures) => Self {
+                name: String::from(&captures["name"]),
+                market: String::from(&captures["market"]),
+                number: captures["number"].parse::<usize>().unwrap(),
+                width: captures["width"].parse::<usize>().unwrap(),
+                height: captures["height"].parse::<usize>().unwrap(),
+                extension: String::from(&captures["extension"]),
+            },
+            None => ParsedID::default(),
+        }
+    }
+}
+
+impl From<String> for ParsedID {
+    fn from(id: String) -> Self {
+        Self::from(id.as_str())
+    }
+}
+
+impl Image {
+    pub fn id(&self) -> String {
+        let result = self.url.query_pairs().find(|(key, _)| key == "id");
+
+        if let Some(id) = result {
+            id.1.into_owned()
+        } else {
+            String::default()
+        }
+    }
+
+    pub fn filename(&self) -> String {
+        let parsed_id = ParsedID::from(self.id());
+
+        format!(
+            "{}_{}.{}",
+            self.start_date, parsed_id.name, parsed_id.extension
+        )
+    }
+}
+
+pub async fn query(query: Query) -> Result<Vec<Image>, Box<dyn Error>> {
     let resp = reqwest::Client::new()
         .get("https://cn.bing.com/HPImageArchive.aspx")
         .query(&query)
@@ -61,41 +165,44 @@ pub async fn query(query: Query) -> Result<Vec<Url>, Box<dyn Error>> {
         return Err(format!("failed to get images response: {}", resp.status()).into());
     }
 
-    let base_url = Url::parse("https://cn.bing.com/")?;
-    let urls = resp
+    let images = resp
         .json::<ImagesResponse>()
         .await?
         .images
         .into_iter()
-        .map(|image| base_url.join(image.url.as_str()).unwrap())
+        .map(|info| Image::from(info))
         .collect::<Vec<_>>();
 
-    Ok(urls)
+    Ok(images)
 }
 
 pub async fn get_images() -> Result<Vec<Url>, Box<dyn Error>> {
-    Ok(query(Query::default()).await?)
+    Ok(query(Query::default())
+        .await?
+        .into_iter()
+        .map(|image| image.url)
+        .collect::<Vec<_>>())
 }
 
 /// Copies images to a specified directory.
 pub async fn copy_images_to<P: AsRef<Path>>(dst: P) -> Result<(), Box<dyn Error>> {
-    let tasks = get_images().await?.into_iter().filter_map(|url| {
-        if let Some(id) = url.query_pairs().find(|(key, _)| key == "id") {
-            let dst = dst.as_ref().join(id.1.into_owned());
+    let tasks = query(Query::default())
+        .await?
+        .into_iter()
+        .filter_map(|image| {
+            let dst = dst.as_ref().join(image.filename());
             if dst.exists() {
                 return None;
             }
 
             Some(tokio::spawn(async move {
-                util::download_file(&url, dst).await.unwrap_or_else(|e| {
-                    eprintln!("failed to download {url}: {e}");
-                })
+                util::download_file(&image.url, dst)
+                    .await
+                    .unwrap_or_else(|e| {
+                        eprintln!("failed to download {}: {}", image.url, e);
+                    })
             }))
-        } else {
-            eprintln!("The query parameter id to be used as filename does not exist.");
-            None
-        }
-    });
+        });
 
     futures::future::join_all(tasks).await;
     Ok(())

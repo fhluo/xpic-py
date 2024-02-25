@@ -8,9 +8,9 @@ use xpic::{bing, spotlight};
 
 fn get_cache_dir() -> PathBuf {
     return if let Some(dir) = tauri::api::path::local_data_dir() {
-        dir.join("Xpic").join("Cache")
+        dir.join("Xpic").join(".cache")
     } else {
-        PathBuf::from("Cache")
+        PathBuf::from(".cache")
     };
 }
 

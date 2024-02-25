@@ -4407,6 +4407,7 @@ dependencies = [
  "futures",
  "glob",
  "image",
+ "regex",
  "reqwest",
  "serde",
  "serde_json",
