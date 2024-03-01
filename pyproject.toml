@@ -17,7 +17,7 @@ win32mica = "^3.0"
 opencv-python = "^4.9.0.80"
 
 [tool.poetry.group.dev.dependencies]
-ruff = "^0.2.2"
+ruff = "^0.3.0"
 pyinstaller = "^6.4.0"
 
 [tool.ruff]
