@@ -20,7 +20,9 @@ function App() {
             setWallpapers(wallpapers),
         );
 
-        document.addEventListener("contextmenu", event => event.preventDefault())
+        if (import.meta.env.MODE !== "development") {
+            document.addEventListener("contextmenu", event => event.preventDefault())
+        }
     }, []);
 
     const getName = (path: string): string => {
@@ -32,13 +34,13 @@ function App() {
         <>
             <OverlayScrollbarsComponent defer>
                 <div className={"w-screen h-screen"}>
-                    <LightGallery
+                    <LightGallery elementClassNames={"flex flex-wrap items-center justify-center py-8 px-4"}
                         plugins={[lgZoom, lgThumbnail]}
                         speed={500}
                         thumbnail={true}
                     >
                         {wallpapers.map((v) => (
-                            <a href={convertFileSrc(v)} className={"p-3"}>
+                            <a href={convertFileSrc(v)} className={"p-3"} draggable={false}>
                                 <img
                                     src={convertFileSrc(v)}
                                     alt={getName(v)}
