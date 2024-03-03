@@ -16,6 +16,11 @@
         "assetScope": [
           "$LOCALDATA/Xpic/.cache/**"
         ]
+      },
+      "window": {
+        "center": true,
+        "setSize": true,
+        "setMinSize": true
       }
     },
     "windows": [
@@ -23,10 +28,11 @@
         "fullscreen": false,
         "resizable": true,
         "title": "Xpic",
-        "width": 1280,
-        "height": 720,
+        "width": 1184,
+        "height": 700,
         "transparent": true,
-        "decorations": false
+        "decorations": false,
+        "center": true
       }
     ],
     "security": {
