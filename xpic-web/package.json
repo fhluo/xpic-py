@@ -1,33 +1,29 @@
 {
-  "name": "xpic",
+  "name": "xpic-web",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "format": "biome format --write ./src",
-    "lint": "biome lint ./src",
-    "check": "biome check --apply ./src",
-    "preview": "vite preview"
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^3.0.2",
+    "@tsconfig/svelte": "^5.0.2",
+    "autoprefixer": "^10.4.18",
+    "postcss": "^8.4.35",
+    "svelte": "^5.0.0-next.70",
+    "svelte-check": "^3.6.4",
+    "tailwindcss": "^3.4.1",
+    "tslib": "^2.6.2",
+    "typescript": "^5.2.2",
+    "vite": "^5.1.4"
   },
   "dependencies": {
     "@tauri-apps/api": "^1.5.3",
-    "lightgallery": "^2.7.2",
     "overlayscrollbars": "^2.5.0",
-    "overlayscrollbars-react": "^0.5.4",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^1.5.3",
-    "@types/react": "^18.2.57",
-    "@types/react-dom": "^18.2.19",
-    "@vitejs/plugin-react-swc": "^3.6.0",
-    "autoprefixer": "^10.4.17",
-    "postcss": "^8.4.35",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5.3.3",
-    "vite": "^5.1.4"
+    "overlayscrollbars-svelte": "^0.5.3"
   }
 }

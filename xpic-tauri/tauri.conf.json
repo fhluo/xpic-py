@@ -6,8 +6,8 @@
     "distDir": "../xpic-web/dist"
   },
   "package": {
-    "productName": "xpic",
-    "version": "0.1.0"
+    "productName": "Xpic",
+    "version": "0.2.0"
   },
   "tauri": {
     "allowlist": {
@@ -21,6 +21,9 @@
         "center": true,
         "setSize": true,
         "setMinSize": true
+      },
+      "path": {
+        "all": true
       }
     },
     "windows": [
@@ -48,7 +51,15 @@
         "icons/128x128@2x.png",
         "icons/icon.icns",
         "icons/icon.ico"
-      ]
+      ],
+      "windows": {
+        "wix": {
+          "language": [
+            "en-US",
+            "zh-CN"
+          ]
+        }
+      }
     }
   }
 }
