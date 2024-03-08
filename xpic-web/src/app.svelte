@@ -18,18 +18,20 @@
     )
 
     // get and update wallpapers
-    onMount(() => {
+    $effect(() => {
         invoke<string[]>("get_wallpapers").then(r => {
             wallpapers = r
         });
 
         invoke<string[]>("update_wallpapers").then(r =>
-            wallpapers = r
+            r.filter(v => !wallpapers.includes(v)).forEach(
+               v => wallpapers.push(v)
+            )
         );
     })
 
     // disable default context menu
-    onMount(() => {
+    $effect(() => {
         if (import.meta.env.MODE !== "development") {
             document.addEventListener("contextmenu", (event) =>
                 event.preventDefault(),
@@ -56,7 +58,7 @@
     }
 
     // set windows default size and min size
-    onMount(() => {
+    $effect(() => {
         const defaultWindowSize = new LogicalSize(
             config.default.cols * config.img.width + (config.default.cols - 1) * config.gallery.gap + config.gallery.paddingX * 2,
             config.default.rows * config.img.height + (config.default.rows - 1) * config.gallery.gap + config.gallery.paddingY * 2,
@@ -82,7 +84,7 @@
     }
 
     // set cols
-    onMount(() => {
+    $effect(() => {
         adjustCols()
         window.addEventListener("resize", adjustCols)
     })
