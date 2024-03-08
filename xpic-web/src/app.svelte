@@ -1,11 +1,12 @@
 <script lang="ts">
-    import {onMount} from "svelte";
     import {convertFileSrc, invoke} from "@tauri-apps/api/tauri";
     import {appWindow, LogicalSize} from "@tauri-apps/api/window";
     import {basename} from "@tauri-apps/api/path";
     import 'overlayscrollbars/overlayscrollbars.css';
     import {OverlayScrollbarsComponent} from "overlayscrollbars-svelte";
     import {open} from "@tauri-apps/api/shell";
+    import * as ContextMenu from "@lib/components/ui/context-menu";
+    import {Download, Image, OpenInNewWindow} from "svelte-radix";
 
     let wallpapers = $state([] as string[]);
     // get base names for wallpapers
@@ -89,6 +90,8 @@
         adjustCols()
         window.addEventListener("resize", adjustCols)
     })
+
+    let menus = $state([] as boolean[])
 </script>
 
 <main>
@@ -97,14 +100,46 @@
             <div id="gallery" bind:this={gallery}
                  class="grid grid-cols-4 gap-8 items-center justify-center py-8 px-16"
             >
-                {#each wallpapers as path}
-                    <img src={convertFileSrc(path)}
-                         alt={names[path]}
-                         width={config.img.width}
-                         height={config.img.height}
-                         class="wallpaper rounded hover:brightness-125 hover:drop-shadow"
-                         ondblclick={() => void open(path)}
-                    />
+                {#each wallpapers as path, i}
+                    <ContextMenu.Root bind:open={menus[i]} onOpenChange={value => {
+                        if (value) {
+                            for(let j = 0; j < menus.length; j++) {
+                              if (i !== j) {
+                                  menus[j] = false
+                              }
+                            }
+                        }
+                    }}>
+                        <ContextMenu.Trigger>
+                            <img src={convertFileSrc(path)}
+                                 alt={names[path]}
+                                 width={config.img.width}
+                                 height={config.img.height}
+                                 class="wallpaper rounded hover:brightness-125 hover:drop-shadow select-none"
+                                 ondblclick={() => void open(path)}
+                            />
+                        </ContextMenu.Trigger>
+                        <ContextMenu.Content class="border-0">
+                            <ContextMenu.Item onclick={() => void open(path)}>
+                                <div class="flex flex-row justify-center items-center gap-2">
+                                    <div class="text-gray-600"><OpenInNewWindow/></div>
+                                    <div>Open wallpaper</div>
+                                </div>
+                            </ContextMenu.Item>
+                            <ContextMenu.Item>
+                                <div class="flex flex-row justify-center items-center gap-2">
+                                    <div class="text-gray-600"><Download/></div>
+                                    <div>Save wallpaper</div>
+                                </div>
+                            </ContextMenu.Item>
+                            <ContextMenu.Item>
+                                <div class="flex flex-row justify-center items-center gap-2">
+                                    <div class="text-gray-600"><Image/></div>
+                                    <div>Set as desktop wallpaper</div>
+                                </div>
+                            </ContextMenu.Item>
+                        </ContextMenu.Content>
+                    </ContextMenu.Root>
                 {/each}
             </div>
         </div>

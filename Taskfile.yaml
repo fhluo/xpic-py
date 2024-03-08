@@ -25,15 +25,10 @@ tasks:
     cmds:
       - pnpm dev
 
-  check-web:
+  ui-add:
     dir: xpic-web
     cmds:
-      - pnpm check
-
-  format-web:
-    dir: xpic-web
-    cmds:
-      - pnpm format
+      - pnpm shadcn-svelte add {{.CLI_ARGS}}
 
   build-cli:
     cmds:
