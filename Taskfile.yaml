@@ -1,9 +1,19 @@
 version: "3"
 
 tasks:
-  setup:
+  setup-tauri:
     cmds:
       - cargo install tauri-cli
+
+  setup-web:
+    dir: xpic-web
+    cmds:
+      - pnpm install
+
+  setup:
+    deps:
+      - setup-tauri
+      - setup-web
 
   build-web:
     dir: xpic-web
