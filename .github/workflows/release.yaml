@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+
+jobs:
+  release:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+
+      - name: Set up Task
+        run: go install github.com/go-task/task/v3/cmd/task@latest
+
+      - name: Set up Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 21
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
+      - name: Setup
+        run: task setup
+
+      - name: Build CLI
+        run: task build-cli -- --release
+
+      - name: Build
+        run: task build
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            target/release/Xpic.exe
+            target/release/xpic-cli.exe
+            target/release/bundle/msi/*.msi
+            target/release/bundle/nsis/*.exe

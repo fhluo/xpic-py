@@ -1,6 +1,10 @@
 version: "3"
 
 tasks:
+  setup:
+    cmds:
+      - cargo install tauri-cli
+
   build-web:
     dir: xpic-web
     cmds:
