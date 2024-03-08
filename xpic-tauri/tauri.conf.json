@@ -24,6 +24,9 @@
       },
       "path": {
         "all": true
+      },
+      "shell": {
+        "open": "^.*?\\.(jpg|jpeg|png)$"
       }
     },
     "windows": [

@@ -5,6 +5,7 @@
     import {basename} from "@tauri-apps/api/path";
     import 'overlayscrollbars/overlayscrollbars.css';
     import {OverlayScrollbarsComponent} from "overlayscrollbars-svelte";
+    import {open} from "@tauri-apps/api/shell";
 
     let wallpapers = $state([] as string[]);
     // get base names for wallpapers
@@ -25,7 +26,7 @@
 
         invoke<string[]>("update_wallpapers").then(r =>
             r.filter(v => !wallpapers.includes(v)).forEach(
-               v => wallpapers.push(v)
+                v => wallpapers.push(v)
             )
         );
     })
@@ -43,8 +44,8 @@
 
     const config = {
         default: {
-          cols: 4,
-          rows: 4,
+            cols: 4,
+            rows: 4,
         },
         img: {
             width: 240,
@@ -102,6 +103,7 @@
                          width={config.img.width}
                          height={config.img.height}
                          class="wallpaper rounded hover:brightness-125 hover:drop-shadow"
+                         ondblclick={() => void open(path)}
                     />
                 {/each}
             </div>
