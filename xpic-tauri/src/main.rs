@@ -1,9 +1,12 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use std::os::raw::c_void;
 use std::path::PathBuf;
 use std::{env, vec};
+use std::ffi::CString;
 use tauri::Manager;
 use window_vibrancy::apply_mica;
+use windows::Win32::UI::WindowsAndMessaging::{SystemParametersInfoA, SystemParametersInfoW, SPIF_UPDATEINIFILE, SPI_SETDESKWALLPAPER};
 use xpic::{bing, spotlight};
 
 fn get_cache_dir() -> PathBuf {
@@ -65,6 +68,18 @@ async fn update_wallpapers() -> Vec<String> {
     get_wallpapers().await
 }
 
+#[tauri::command]
+async fn set_as_desktop_wallpaper(path: String) {
+    let path_ = CString::new(path.to_owned()).unwrap();
+
+    unsafe {
+        // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-systemparametersinfow
+        if let Err(err) = SystemParametersInfoA(SPI_SETDESKWALLPAPER, 0, Some(path_.as_ptr() as *mut c_void), SPIF_UPDATEINIFILE) {
+            eprintln!("failed to set {} as desktop wallpaper: {}", path, err);
+        }
+    }
+}
+
 fn main() {
     tauri::Builder::default()
         .setup(|app| {
@@ -79,7 +94,7 @@ fn main() {
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![get_wallpapers, update_wallpapers])
+        .invoke_handler(tauri::generate_handler![get_wallpapers, update_wallpapers, set_as_desktop_wallpaper])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
