@@ -27,6 +27,12 @@
       },
       "shell": {
         "open": "^.*?\\.(jpg|jpeg|png)$"
+      },
+      "dialog": {
+        "save": true
+      },
+      "fs": {
+        "copyFile": true
       }
     },
     "windows": [

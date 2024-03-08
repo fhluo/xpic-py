@@ -7,6 +7,8 @@
     import {open} from "@tauri-apps/api/shell";
     import * as ContextMenu from "@lib/components/ui/context-menu";
     import {Download, Image, OpenInNewWindow} from "svelte-radix";
+    import { save } from "@tauri-apps/api/dialog";
+    import { copyFile } from "@tauri-apps/api/fs";
 
     let wallpapers = $state([] as string[]);
     // get base names for wallpapers
@@ -126,7 +128,18 @@
                                     <div>Open wallpaper</div>
                                 </div>
                             </ContextMenu.Item>
-                            <ContextMenu.Item>
+                            <ContextMenu.Item onclick={async () => {
+                                const filename = await save({
+                                    filters: [{
+                                        name: "Image",
+                                        extensions: ["png", "jpg", "jpeg"]
+                                    }]
+                                })
+                                
+                                if (filename) {
+                                    copyFile(path, filename)
+                                }
+                            }}>
                                 <div class="flex flex-row justify-center items-center gap-2">
                                     <div class="text-gray-600"><Download/></div>
                                     <div>Save wallpaper</div>
