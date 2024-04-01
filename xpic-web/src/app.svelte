@@ -5,7 +5,7 @@
     import 'overlayscrollbars/overlayscrollbars.css';
     import {OverlayScrollbarsComponent} from "overlayscrollbars-svelte";
     import {open} from "@tauri-apps/api/shell";
-    import * as ContextMenu from "@lib/components/ui/context-menu";
+    import * as ContextMenu from "$lib/components/ui/context-menu";
     import {Download, Image, OpenInNewWindow} from "svelte-radix";
     import { save } from "@tauri-apps/api/dialog";
     import { copyFile } from "@tauri-apps/api/fs";
@@ -137,7 +137,7 @@
                                 })
                                 
                                 if (filename) {
-                                    copyFile(path, filename)
+                                    await copyFile(path, filename)
                                 }
                             }}>
                                 <div class="flex flex-row justify-center items-center gap-2">

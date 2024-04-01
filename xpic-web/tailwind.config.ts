@@ -1,5 +1,5 @@
-/** @type {import('tailwindcss').Config} */
 import {fontFamily} from "tailwindcss/defaultTheme";
+import {Config} from "tailwindcss";
 
 export default {
     darkMode: ["class"],
@@ -63,4 +63,4 @@ export default {
         },
     },
     plugins: [],
-}
+} as Config
