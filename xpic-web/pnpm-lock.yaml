@@ -6,11 +6,23 @@ settings:
 
 dependencies:
   '@tauri-apps/api':
-    specifier: ^1.5.3
-    version: 1.5.3
+    specifier: 2.0.0-beta.6
+    version: 2.0.0-beta.6
+  '@tauri-apps/plugin-dialog':
+    specifier: 2.0.0-beta.2
+    version: 2.0.0-beta.2
+  '@tauri-apps/plugin-fs':
+    specifier: 2.0.0-beta.2
+    version: 2.0.0-beta.2
+  '@tauri-apps/plugin-shell':
+    specifier: 2.0.0-beta.2
+    version: 2.0.0-beta.2
+  '@tauri-apps/plugin-window':
+    specifier: 2.0.0-alpha.1
+    version: 2.0.0-alpha.1
   bits-ui:
     specifier: ^0.21.1
-    version: 0.21.1(svelte@5.0.0-next.72)
+    version: 0.21.1(svelte@5.0.0-next.90)
   clsx:
     specifier: ^2.1.0
     version: 2.1.0
@@ -19,10 +31,10 @@ dependencies:
     version: 2.6.1
   overlayscrollbars-svelte:
     specifier: ^0.5.3
-    version: 0.5.3(overlayscrollbars@2.6.1)(svelte@5.0.0-next.72)
+    version: 0.5.3(overlayscrollbars@2.6.1)(svelte@5.0.0-next.90)
   svelte-radix:
     specifier: ^1.1.0
-    version: 1.1.0(svelte@5.0.0-next.72)
+    version: 1.1.0(svelte@5.0.0-next.90)
   tailwind-merge:
     specifier: ^2.2.2
     version: 2.2.2
@@ -33,7 +45,7 @@ dependencies:
 devDependencies:
   '@sveltejs/vite-plugin-svelte':
     specifier: ^3.0.2
-    version: 3.0.2(svelte@5.0.0-next.72)(vite@5.2.7)
+    version: 3.0.2(svelte@5.0.0-next.90)(vite@5.2.7)
   '@tsconfig/svelte':
     specifier: ^5.0.4
     version: 5.0.4
@@ -50,11 +62,11 @@ devDependencies:
     specifier: ^0.8.3
     version: 0.8.3(typescript@5.4.3)
   svelte:
-    specifier: 5.0.0-next.72
-    version: 5.0.0-next.72
+    specifier: 5.0.0-next.90
+    version: 5.0.0-next.90
   svelte-check:
     specifier: ^3.6.8
-    version: 3.6.8(postcss@8.4.38)(svelte@5.0.0-next.72)
+    version: 3.6.8(postcss@8.4.38)(svelte@5.0.0-next.90)
   tailwindcss:
     specifier: ^3.4.3
     version: 3.4.3
@@ -354,7 +366,7 @@ packages:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.4.15
 
-  /@melt-ui/svelte@0.76.2(svelte@5.0.0-next.72):
+  /@melt-ui/svelte@0.76.2(svelte@5.0.0-next.90):
     resolution: {integrity: sha512-7SbOa11tXUS95T3fReL+dwDs5FyJtCEqrqG3inRziDws346SYLsxOQ6HmX+4BkIsQh1R8U3XNa+EMmdMt38lMA==}
     peerDependencies:
       svelte: '>=3 <5'
@@ -365,7 +377,7 @@ packages:
       dequal: 2.0.3
       focus-trap: 7.5.4
       nanoid: 5.0.6
-      svelte: 5.0.0-next.72
+      svelte: 5.0.0-next.90
     dev: false
 
   /@nodelib/fs.scandir@2.1.5:
@@ -512,7 +524,7 @@ packages:
     dev: true
     optional: true
 
-  /@sveltejs/vite-plugin-svelte-inspector@2.0.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@5.0.0-next.72)(vite@5.2.7):
+  /@sveltejs/vite-plugin-svelte-inspector@2.0.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@5.0.0-next.90)(vite@5.2.7):
     resolution: {integrity: sha512-gjr9ZFg1BSlIpfZ4PRewigrvYmHWbDrq2uvvPB1AmTWKuM+dI1JXQSUu2pIrYLb/QncyiIGkFDFKTwJ0XqQZZg==}
     engines: {node: ^18.0.0 || >=20}
     peerDependencies:
@@ -520,28 +532,28 @@ packages:
       svelte: ^4.0.0 || ^5.0.0-next.0
       vite: ^5.0.0
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 3.0.2(svelte@5.0.0-next.72)(vite@5.2.7)
+      '@sveltejs/vite-plugin-svelte': 3.0.2(svelte@5.0.0-next.90)(vite@5.2.7)
       debug: 4.3.4
-      svelte: 5.0.0-next.72
+      svelte: 5.0.0-next.90
       vite: 5.2.7(@types/node@20.12.2)
     transitivePeerDependencies:
       - supports-color
     dev: true
 
-  /@sveltejs/vite-plugin-svelte@3.0.2(svelte@5.0.0-next.72)(vite@5.2.7):
+  /@sveltejs/vite-plugin-svelte@3.0.2(svelte@5.0.0-next.90)(vite@5.2.7):
     resolution: {integrity: sha512-MpmF/cju2HqUls50WyTHQBZUV3ovV/Uk8k66AN2gwHogNAG8wnW8xtZDhzNBsFJJuvmq1qnzA5kE7YfMJNFv2Q==}
     engines: {node: ^18.0.0 || >=20}
     peerDependencies:
       svelte: ^4.0.0 || ^5.0.0-next.0
       vite: ^5.0.0
     dependencies:
-      '@sveltejs/vite-plugin-svelte-inspector': 2.0.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@5.0.0-next.72)(vite@5.2.7)
+      '@sveltejs/vite-plugin-svelte-inspector': 2.0.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@5.0.0-next.90)(vite@5.2.7)
       debug: 4.3.4
       deepmerge: 4.3.1
       kleur: 4.1.5
       magic-string: 0.30.8
-      svelte: 5.0.0-next.72
-      svelte-hmr: 0.15.3(svelte@5.0.0-next.72)
+      svelte: 5.0.0-next.90
+      svelte-hmr: 0.15.3(svelte@5.0.0-next.90)
       vite: 5.2.7(@types/node@20.12.2)
       vitefu: 0.2.5(vite@5.2.7)
     transitivePeerDependencies:
@@ -554,9 +566,43 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /@tauri-apps/api@1.5.3:
-    resolution: {integrity: sha512-zxnDjHHKjOsrIzZm6nO5Xapb/BxqUq1tc7cGkFXsFkGTsSWgCPH1D8mm0XS9weJY2OaR73I3k3S+b7eSzJDfqA==}
+  /@tauri-apps/api@2.0.0-alpha.6:
+    resolution: {integrity: sha512-ZMOc3eu9amwvkC6M69h3hWt4/EsFaAXmtkiw4xd2LN59/lTb4ZQiVfq2QKlRcu1rj3n/Tcr7U30ZopvHwXBGIg==}
     engines: {node: '>= 14.6.0', npm: '>= 6.6.0', yarn: '>= 1.19.1'}
+    dev: false
+
+  /@tauri-apps/api@2.0.0-beta.4:
+    resolution: {integrity: sha512-Nxtj28NYUo5iwYkpYslxmOPkdI2WkELU2e3UH9nbJm9Ydki2CQwJVGQxx4EANtdZcMNsEsUzRqaDTvEUYH1l6w==}
+    engines: {node: '>= 18', npm: '>= 6.6.0', yarn: '>= 1.19.1'}
+    dev: false
+
+  /@tauri-apps/api@2.0.0-beta.6:
+    resolution: {integrity: sha512-ay3kAXYQoqC3rX4Vr3y6uGwrBhRPM7UQqZ9wr1VYzN6lkcMIcu7+UBvytmcfXDlVctqFoMQJafn6+dK/Oqh8+Q==}
+    engines: {node: '>= 18', npm: '>= 6.6.0', yarn: '>= 1.19.1'}
+    dev: false
+
+  /@tauri-apps/plugin-dialog@2.0.0-beta.2:
+    resolution: {integrity: sha512-WugTn/8d5jYA0GL1JRIJgA1OSxG0h2V4PSZZzehgA3v7rPlIU6w9s2+dSRqj55aMj6hm3Az9YbQqC18nuaHkpw==}
+    dependencies:
+      '@tauri-apps/api': 2.0.0-beta.4
+    dev: false
+
+  /@tauri-apps/plugin-fs@2.0.0-beta.2:
+    resolution: {integrity: sha512-jqeRBrm0h9QUoep5OzHx5R0vgFCYVAmZIy45jJpR7hHvnEgUwDU8JLUUVPvWniq6tUtxjwr1V/a0Hm9pE9V+NQ==}
+    dependencies:
+      '@tauri-apps/api': 2.0.0-beta.4
+    dev: false
+
+  /@tauri-apps/plugin-shell@2.0.0-beta.2:
+    resolution: {integrity: sha512-9rWsfN7Wt+EuWmpmNnK8bCs+04fzhEYrHtWyLIAYxb9diFdcJrEoctCP9YM2v+Uf8/y8qFC7VCbZ/9VQHANymQ==}
+    dependencies:
+      '@tauri-apps/api': 2.0.0-beta.4
+    dev: false
+
+  /@tauri-apps/plugin-window@2.0.0-alpha.1:
+    resolution: {integrity: sha512-dFOAgal/3Txz3SQ+LNQq0AK1EPC+acdaFlwPVB/6KXUZYmaFleIlzgxDVoJCQ+/xOhxvYrdQaFLefh0I/Kldbg==}
+    dependencies:
+      '@tauri-apps/api': 2.0.0-alpha.6
     dev: false
 
   /@tsconfig/svelte@5.0.4:
@@ -665,15 +711,15 @@ packages:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
     engines: {node: '>=8'}
 
-  /bits-ui@0.21.1(svelte@5.0.0-next.72):
+  /bits-ui@0.21.1(svelte@5.0.0-next.90):
     resolution: {integrity: sha512-G6agiFtmbgxV2XQBdsn3tYhZw4b4lETtxU1iTpiNOgMkhUo+oV+XDQA3coMzqKDfAsmfyaLEuYtSM/NiRHGjdw==}
     peerDependencies:
       svelte: ^4.0.0
     dependencies:
       '@internationalized/date': 3.5.2
-      '@melt-ui/svelte': 0.76.2(svelte@5.0.0-next.72)
+      '@melt-ui/svelte': 0.76.2(svelte@5.0.0-next.90)
       nanoid: 5.0.6
-      svelte: 5.0.0-next.72
+      svelte: 5.0.0-next.90
     dev: false
 
   /bl@5.1.0:
@@ -1377,14 +1423,14 @@ packages:
       wcwidth: 1.0.1
     dev: true
 
-  /overlayscrollbars-svelte@0.5.3(overlayscrollbars@2.6.1)(svelte@5.0.0-next.72):
+  /overlayscrollbars-svelte@0.5.3(overlayscrollbars@2.6.1)(svelte@5.0.0-next.90):
     resolution: {integrity: sha512-oBuYVlCavo6FNSf+qnvrE9XGbRnnGmpLIGBMNBjlTieGB7v3/bPZ+/j06Zgs89sWn8mI73myMmgGXI97PHuxoQ==}
     peerDependencies:
       overlayscrollbars: ^2.0.0
       svelte: '>=3.54.0'
     dependencies:
       overlayscrollbars: 2.6.1
-      svelte: 5.0.0-next.72
+      svelte: 5.0.0-next.90
     dev: false
 
   /overlayscrollbars@2.6.1:
@@ -1749,7 +1795,7 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  /svelte-check@3.6.8(postcss@8.4.38)(svelte@5.0.0-next.72):
+  /svelte-check@3.6.8(postcss@8.4.38)(svelte@5.0.0-next.90):
     resolution: {integrity: sha512-rhXU7YCDtL+lq2gCqfJDXKTxJfSsCgcd08d7VWBFxTw6IWIbMWSaASbAOD3N0VV9TYSSLUqEBiratLd8WxAJJA==}
     hasBin: true
     peerDependencies:
@@ -1761,8 +1807,8 @@ packages:
       import-fresh: 3.3.0
       picocolors: 1.0.0
       sade: 1.8.1
-      svelte: 5.0.0-next.72
-      svelte-preprocess: 5.1.3(postcss@8.4.38)(svelte@5.0.0-next.72)(typescript@5.4.3)
+      svelte: 5.0.0-next.90
+      svelte-preprocess: 5.1.3(postcss@8.4.38)(svelte@5.0.0-next.90)(typescript@5.4.3)
       typescript: 5.4.3
     transitivePeerDependencies:
       - '@babel/core'
@@ -1776,16 +1822,16 @@ packages:
       - sugarss
     dev: true
 
-  /svelte-hmr@0.15.3(svelte@5.0.0-next.72):
+  /svelte-hmr@0.15.3(svelte@5.0.0-next.90):
     resolution: {integrity: sha512-41snaPswvSf8TJUhlkoJBekRrABDXDMdpNpT2tfHIv4JuhgvHqLMhEPGtaQn0BmbNSTkuz2Ed20DF2eHw0SmBQ==}
     engines: {node: ^12.20 || ^14.13.1 || >= 16}
     peerDependencies:
       svelte: ^3.19.0 || ^4.0.0
     dependencies:
-      svelte: 5.0.0-next.72
+      svelte: 5.0.0-next.90
     dev: true
 
-  /svelte-preprocess@5.1.3(postcss@8.4.38)(svelte@5.0.0-next.72)(typescript@5.4.3):
+  /svelte-preprocess@5.1.3(postcss@8.4.38)(svelte@5.0.0-next.90)(typescript@5.4.3):
     resolution: {integrity: sha512-xxAkmxGHT+J/GourS5mVJeOXZzne1FR5ljeOUAMXUkfEhkLEllRreXpbl3dIYJlcJRfL1LO1uIAPpBpBfiqGPw==}
     engines: {node: '>= 16.0.0', pnpm: ^8.0.0}
     requiresBuild: true
@@ -1829,20 +1875,20 @@ packages:
       postcss: 8.4.38
       sorcery: 0.11.0
       strip-indent: 3.0.0
-      svelte: 5.0.0-next.72
+      svelte: 5.0.0-next.90
       typescript: 5.4.3
     dev: true
 
-  /svelte-radix@1.1.0(svelte@5.0.0-next.72):
+  /svelte-radix@1.1.0(svelte@5.0.0-next.90):
     resolution: {integrity: sha512-kyE9wZiJV937INGb+wiBkAjmGtQUUYRPkVL2Q+/gj+9Vog1Ewd2wNvNmpNMUd+c+euxoc5u5YZMuCUgky9EUPw==}
     peerDependencies:
       svelte: ^3.54.0 || ^4.0.0 || ^5.0.0
     dependencies:
-      svelte: 5.0.0-next.72
+      svelte: 5.0.0-next.90
     dev: false
 
-  /svelte@5.0.0-next.72:
-    resolution: {integrity: sha512-CdL1vXWfaRS4QNAiMEG3f6+7MFPEal+iZisSpY/UJd4Rv0yQAPnRxBYCePYCYk1gxO3nJRN+hv2H57P6iLw44Q==}
+  /svelte@5.0.0-next.90:
+    resolution: {integrity: sha512-qx5shVIRQ9b3VPgj/rim16dWi3md8B8HjHSO5p6RCSg/GP00f9CVUoUtnuCpT4f7ZnBJa/IG3v2rgW9Zn9zEqg==}
     engines: {node: '>=18'}
     dependencies:
       '@ampproject/remapping': 2.3.0

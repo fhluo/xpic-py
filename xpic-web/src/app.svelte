@@ -1,14 +1,14 @@
 <script lang="ts">
-    import {convertFileSrc, invoke} from "@tauri-apps/api/tauri";
-    import {appWindow, LogicalSize} from "@tauri-apps/api/window";
+    import {convertFileSrc, invoke} from "@tauri-apps/api/core";
+    import {getCurrent, LogicalSize, Window} from "@tauri-apps/plugin-window";
     import {basename} from "@tauri-apps/api/path";
     import 'overlayscrollbars/overlayscrollbars.css';
     import {OverlayScrollbarsComponent} from "overlayscrollbars-svelte";
-    import {open} from "@tauri-apps/api/shell";
+    import {open} from "@tauri-apps/plugin-shell";
     import * as ContextMenu from "$lib/components/ui/context-menu";
     import {Download, Image, OpenInNewWindow} from "svelte-radix";
-    import { save } from "@tauri-apps/api/dialog";
-    import { copyFile } from "@tauri-apps/api/fs";
+    import {save} from "@tauri-apps/plugin-dialog";
+    import {copyFile} from "@tauri-apps/plugin-fs";
 
     let wallpapers = $state([] as string[]);
     // get base names for wallpapers
@@ -20,6 +20,8 @@
             return r
         }, {})
     )
+
+    const appWindow = getCurrent()
 
     // get and update wallpapers
     $effect(() => {
@@ -124,7 +126,9 @@
                         <ContextMenu.Content>
                             <ContextMenu.Item onclick={() => void open(path)}>
                                 <div class="flex flex-row justify-center items-center gap-2">
-                                    <div class="text-gray-600"><OpenInNewWindow/></div>
+                                    <div class="text-gray-600">
+                                        <OpenInNewWindow/>
+                                    </div>
                                     <div>Open wallpaper</div>
                                 </div>
                             </ContextMenu.Item>
@@ -141,13 +145,17 @@
                                 }
                             }}>
                                 <div class="flex flex-row justify-center items-center gap-2">
-                                    <div class="text-gray-600"><Download/></div>
+                                    <div class="text-gray-600">
+                                        <Download/>
+                                    </div>
                                     <div>Save wallpaper</div>
                                 </div>
                             </ContextMenu.Item>
                             <ContextMenu.Item onclick={() => invoke("set_as_desktop_wallpaper", {path})}>
                                 <div class="flex flex-row justify-center items-center gap-2">
-                                    <div class="text-gray-600"><Image/></div>
+                                    <div class="text-gray-600">
+                                        <Image/>
+                                    </div>
                                     <div>Set as desktop wallpaper</div>
                                 </div>
                             </ContextMenu.Item>

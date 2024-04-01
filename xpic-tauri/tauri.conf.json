@@ -1,40 +1,14 @@
 {
+  "productName": "Xpic",
+  "version": "0.2.0",
+  "identifier": "xpic",
   "build": {
     "beforeBuildCommand": "task build-web",
+    "devUrl": "http://localhost:1420",
     "beforeDevCommand": "task dev-web",
-    "devPath": "http://localhost:1420",
-    "distDir": "../xpic-web/dist"
+    "frontendDist": "../xpic-web/dist"
   },
-  "package": {
-    "productName": "Xpic",
-    "version": "0.2.0"
-  },
-  "tauri": {
-    "allowlist": {
-      "protocol": {
-        "asset": true,
-        "assetScope": [
-          "$LOCALDATA/Xpic/.cache/**"
-        ]
-      },
-      "window": {
-        "center": true,
-        "setSize": true,
-        "setMinSize": true
-      },
-      "path": {
-        "all": true
-      },
-      "shell": {
-        "open": "^.*?\\.(jpg|jpeg|png)$"
-      },
-      "dialog": {
-        "save": true
-      },
-      "fs": {
-        "copyFile": true
-      }
-    },
+  "app": {
     "windows": [
       {
         "fullscreen": false,
@@ -43,31 +17,29 @@
         "width": 1184,
         "height": 700,
         "transparent": true,
-        "decorations": false,
         "center": true
       }
     ],
     "security": {
       "csp": "default-src 'self'; img-src 'self' asset: https://asset.localhost"
-    },
-    "bundle": {
-      "active": true,
-      "targets": "all",
-      "identifier": "xpic",
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ],
-      "windows": {
-        "wix": {
-          "language": [
-            "en-US",
-            "zh-CN"
-          ]
-        }
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "wix": {
+        "language": [
+          "en-US",
+          "zh-CN"
+        ]
       }
     }
   }

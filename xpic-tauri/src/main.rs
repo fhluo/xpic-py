@@ -1,20 +1,23 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::os::raw::c_void;
-use std::path::PathBuf;
 use std::{env, vec};
 use std::ffi::CString;
+use std::os::raw::c_void;
+use std::path::PathBuf;
+
 use tauri::Manager;
 use window_vibrancy::apply_mica;
-use windows::Win32::UI::WindowsAndMessaging::{SystemParametersInfoA, SystemParametersInfoW, SPIF_UPDATEINIFILE, SPI_SETDESKWALLPAPER};
+use windows::Win32::UI::WindowsAndMessaging::{
+    SPI_SETDESKWALLPAPER, SPIF_UPDATEINIFILE, SystemParametersInfoA,
+};
+
 use xpic::{bing, spotlight};
 
 fn get_cache_dir() -> PathBuf {
-    return if let Some(dir) = tauri::api::path::local_data_dir() {
-        dir.join("Xpic").join(".cache")
-    } else {
-        PathBuf::from(".cache")
-    };
+    env::var("LocalAppData")
+        .map_or(PathBuf::from(".cache"), |local_app_data| {
+            PathBuf::from(local_app_data).join("Xpic").join(".cache")
+        })
 }
 
 async fn cache_images() {
@@ -41,8 +44,7 @@ async fn cache_images() {
                 }
             })
         },
-    ])
-    .await;
+    ]).await;
 }
 
 fn get_cached_images() -> Vec<PathBuf> {
@@ -74,7 +76,12 @@ async fn set_as_desktop_wallpaper(path: String) {
 
     unsafe {
         // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-systemparametersinfow
-        if let Err(err) = SystemParametersInfoA(SPI_SETDESKWALLPAPER, 0, Some(path_.as_ptr() as *mut c_void), SPIF_UPDATEINIFILE) {
+        if let Err(err) = SystemParametersInfoA(
+            SPI_SETDESKWALLPAPER,
+            0,
+            Some(path_.as_ptr() as *mut c_void),
+            SPIF_UPDATEINIFILE,
+        ) {
             eprintln!("failed to set {} as desktop wallpaper: {}", path, err);
         }
     }
@@ -82,8 +89,11 @@ async fn set_as_desktop_wallpaper(path: String) {
 
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_shell::init())
         .setup(|app| {
-            let window = app.get_window("main").unwrap();
+            let window = app.get_webview_window("main").unwrap();
 
             #[cfg(target_os = "windows")]
             {
@@ -94,7 +104,11 @@ fn main() {
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![get_wallpapers, update_wallpapers, set_as_desktop_wallpaper])
+        .invoke_handler(tauri::generate_handler![
+            get_wallpapers,
+            update_wallpapers,
+            set_as_desktop_wallpaper
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
