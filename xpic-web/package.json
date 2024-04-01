@@ -1,36 +1,36 @@
 {
   "name": "xpic-web",
   "private": true,
-  "version": "0.2.0-alpha.1",
+  "version": "0.2.0-alpha.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "svelte-check --tsconfig ./tsconfig.json"
+    "svelte-check": "svelte-check --tsconfig ./tsconfig.json"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.0.2",
-    "@tsconfig/svelte": "^5.0.2",
-    "@types/node": "^20.11.25",
-    "autoprefixer": "^10.4.18",
-    "postcss": "^8.4.35",
-    "shadcn-svelte": "^0.8.1",
+    "@tsconfig/svelte": "^5.0.4",
+    "@types/node": "^20.12.2",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "shadcn-svelte": "^0.8.3",
     "svelte": "5.0.0-next.72",
-    "svelte-check": "^3.6.6",
-    "tailwindcss": "^3.4.1",
+    "svelte-check": "^3.6.8",
+    "tailwindcss": "^3.4.3",
     "tslib": "^2.6.2",
-    "typescript": "^5.4.2",
-    "vite": "^5.1.5"
+    "typescript": "^5.4.3",
+    "vite": "^5.2.7"
   },
   "dependencies": {
     "@tauri-apps/api": "^1.5.3",
-    "bits-ui": "^0.19.5",
+    "bits-ui": "^0.21.1",
     "clsx": "^2.1.0",
-    "overlayscrollbars": "^2.5.0",
+    "overlayscrollbars": "^2.6.1",
     "overlayscrollbars-svelte": "^0.5.3",
-    "svelte-radix": "^1.0.3",
-    "tailwind-merge": "^2.2.1",
-    "tailwind-variants": "^0.2.0"
+    "svelte-radix": "^1.1.0",
+    "tailwind-merge": "^2.2.2",
+    "tailwind-variants": "^0.2.1"
   }
 }
