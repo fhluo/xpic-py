@@ -1,6 +1,6 @@
 <script lang="ts">
     import {convertFileSrc, invoke} from "@tauri-apps/api/core";
-    import {getCurrent, LogicalSize, Window} from "@tauri-apps/plugin-window";
+    import {getCurrent, LogicalSize, Window} from "@tauri-apps/api/window";
     import {basename} from "@tauri-apps/api/path";
     import 'overlayscrollbars/overlayscrollbars.css';
     import {OverlayScrollbarsComponent} from "overlayscrollbars-svelte";
