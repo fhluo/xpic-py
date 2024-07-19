@@ -6,6 +6,6 @@ description = "Save wallpapers from Windows Spotlight and Bing"
 
 [dependencies]
 xpic = { path = "../xpic" }
-clap = { version = "4.5.4", features = ["derive"] }
+clap = { version = "4.5.9", features = ["derive"] }
 futures = "0.3.30"
-tokio = { version = "1.37.0", features = ["full"] }
+tokio = { version = "1.38.1", features = ["full"] }
