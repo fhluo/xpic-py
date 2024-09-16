@@ -9,6 +9,7 @@ __all__ = ["main"]
 
 cli = typer.Typer(add_completion=False)
 
+
 @cli.command(name="list")
 def list_command() -> None:
     """List wallpapers."""
@@ -24,6 +25,7 @@ def save(dst: Annotated[Path, typer.Option(help="Path to save wallpapers.")] = "
     """Save wallpapers."""
     spotlight.save_images(dst)
     bing.save_images(dst)
+
 
 def main() -> None:
     cli()
