@@ -38,7 +38,7 @@ tasks:
     deps:
       - gen
     cmds:
-      - poetry run pyinstaller --add-data "assets/xpic.png:assets"  --add-data "assets/xpic.qss:assets" --onefile --name=xpic --icon=assets/xpic.ico --windowed xpic_gui/__main__.py
+      - rye run pyinstaller --add-data "assets/xpic.png:assets"  --add-data "assets/xpic.qss:assets" --onefile --name=xpic --icon=assets/xpic.ico --windowed xpic_gui/__main__.py
 
   bundle:
     deps:
