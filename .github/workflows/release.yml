@@ -13,24 +13,16 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v3
-      
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.12"
+      - uses: actions/checkout@v4
 
-      - name: Set up Poetry
-        run: pip install poetry
+      - name: Set up Task
+        uses: arduino/setup-task@v2
       
-      - name: Install dependencies
-        run: poetry install
+      - name: Set up Rye
+        uses: eifinger/setup-rye@v4
 
       - name: Bundle
-        run: |
-          poetry run python assets/gen_ico.py
-          poetry run pyinstaller --onefile --icon=assets/xpic.ico xpic-cli.py
-          poetry run pyinstaller --add-data "assets/xpic.png:assets"  --add-data "assets/xpic.qss:assets" --onefile --icon=assets/xpic.ico --windowed xpic.py
+        run: task bundle
 
       - name: Release
         uses: softprops/action-gh-release@v1

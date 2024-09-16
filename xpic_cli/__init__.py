@@ -3,10 +3,11 @@ from pathlib import Path
 import typer
 from typing_extensions import Annotated
 
-from wallpapers import spotlight, bing
+from xpic import spotlight, bing
+
+__all__ = ["main"]
 
 cli = typer.Typer(add_completion=False)
-
 
 @cli.command(name="list")
 def list_command() -> None:
@@ -24,6 +25,5 @@ def save(dst: Annotated[Path, typer.Option(help="Path to save wallpapers.")] = "
     spotlight.save_images(dst)
     bing.save_images(dst)
 
-
-if __name__ == "__main__":
+def main() -> None:
     cli()

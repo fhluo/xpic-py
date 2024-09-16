@@ -1,4 +1,3 @@
-import asyncio
 import math
 import os
 import sys
@@ -33,8 +32,8 @@ from PySide6.QtWidgets import (
 from win32mica import MicaTheme, MicaStyle
 
 import config
-import wallpapers
-from wallpapers import cache_images, get_cached_images, Size
+import xpic
+from xpic import cache_images, get_cached_images, Size
 
 
 class ContextMenu(QMenu):
@@ -135,7 +134,7 @@ class ImageLabel(QLabel):
         copyfile(self.path, Path(filename).with_suffix(self.path.suffix))
 
     def set_as_desktop_wallpaper(self) -> None:
-        wallpapers.set_desktop_wallpaper(self.path)
+        xpic.set_desktop_wallpaper(self.path)
 
     def enterEvent(self, event):
         self.setPixmap(self.brighter_pixmap)
@@ -334,15 +333,3 @@ class App:
         self.window.apply_mica()
         self.window.show()
         self._app.exec()
-
-
-async def main():
-    app = App()
-    task = asyncio.create_task(app.window.images_widget.cahche_images_async())
-
-    app.run()
-    await task
-
-
-if __name__ == "__main__":
-    asyncio.run(main())

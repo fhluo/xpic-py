@@ -2,35 +2,35 @@ version: 3
 
 tasks:
   format:
-    cmd: poetry run ruff format .
+    cmd: rye fmt
 
   check:
-    cmd: poetry run ruff check .
+    cmd: rye lint
 
   list:
-    cmd: poetry run python xpic-cli.py list
+    cmd: rye run xpic-cli list
 
   save:
-    cmd: poetry run python xpic-cli.py save
+    cmd: rye run xpic-cli save
 
   run:
-    cmd: poetry run python xpic.py
+    cmd: rye run xpic
 
   gen:
     cmds:
-      - poetry run python assets/gen_ico.py
+      - rye run python assets/gen_ico.py
 
   bundle-cli:
     deps:
       - gen
     cmds:
-      - poetry run pyinstaller --onefile --icon=assets/xpic.ico xpic-cli.py
+      - rye run pyinstaller --onefile --name=xpic-cli --icon=assets/xpic.ico xpic_cli/__main__.py
 
   bundle-gui:
     deps:
       - gen
     cmds:
-      - poetry run pyinstaller --add-data "assets/xpic.png:assets"  --add-data "assets/xpic.qss:assets" --onefile --icon=assets/xpic.ico --windowed xpic.py
+      - poetry run pyinstaller --add-data "assets/xpic.png:assets"  --add-data "assets/xpic.qss:assets" --onefile --name=xpic --icon=assets/xpic.ico --windowed xpic_gui/__main__.py
 
   bundle:
     deps:
