@@ -7,6 +7,9 @@ tasks:
   check:
     cmd: rye lint
 
+  sync:
+    cmd: rye sync
+
   list:
     cmd: rye run xpic-cli list
 
@@ -19,6 +22,11 @@ tasks:
   gen:
     cmds:
       - rye run python assets/gen_ico.py
+    sources:
+      - assets/xpic.png
+      - assets/gen_ico.py
+    generates:
+      - assets/xpic.ico
 
   bundle-cli:
     deps:

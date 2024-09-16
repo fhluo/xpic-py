@@ -22,7 +22,9 @@ jobs:
         uses: eifinger/setup-rye@v4
 
       - name: Bundle
-        run: task bundle
+        run: |
+          task sync
+          task bundle
 
       - name: Release
         uses: softprops/action-gh-release@v1
