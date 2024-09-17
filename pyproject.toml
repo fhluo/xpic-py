@@ -21,6 +21,7 @@ requires-python = ">= 3.12"
 [project.scripts]
 "xpic-cli" = "xpic_cli:main"
 "xpic" = "xpic_gui:main"
+"img-conv" = "tools.img_conv:main"
 
 [build-system]
 requires = ["hatchling"]
@@ -36,7 +37,7 @@ dev-dependencies = [
 allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
-packages = ["xpic", "xpic_cli", "xpic_gui"]
+packages = ["xpic", "xpic_cli", "xpic_gui", "tools/img_conv"]
 
 [tool.ruff]
 line-length = 120

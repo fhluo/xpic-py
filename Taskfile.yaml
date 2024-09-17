@@ -20,13 +20,13 @@ tasks:
     cmd: rye run xpic
 
   gen:
+    dir: assets
     cmds:
-      - rye run python assets/gen_ico.py
+      - rye run img-conv -i xpic.png -o xpic.ico
     sources:
-      - assets/xpic.png
-      - assets/gen_ico.py
+      - xpic.png
     generates:
-      - assets/xpic.ico
+      - xpic.ico
 
   bundle-cli:
     deps:
