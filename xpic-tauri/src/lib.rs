@@ -1,21 +1,20 @@
-use std::{env, vec};
 use std::ffi::CString;
 use std::os::raw::c_void;
 use std::path::PathBuf;
+use std::{env, vec};
 
 use tauri::Manager;
 use window_vibrancy::apply_mica;
 use windows::Win32::UI::WindowsAndMessaging::{
-    SPI_SETDESKWALLPAPER, SPIF_UPDATEINIFILE, SystemParametersInfoA,
+    SystemParametersInfoA, SPIF_UPDATEINIFILE, SPI_SETDESKWALLPAPER,
 };
 
 use xpic::{bing, spotlight};
 
 fn get_cache_dir() -> PathBuf {
-    env::var("LocalAppData")
-        .map_or(PathBuf::from(".cache"), |local_app_data| {
-            PathBuf::from(local_app_data).join("Xpic").join(".cache")
-        })
+    env::var("LocalAppData").map_or(PathBuf::from(".cache"), |local_app_data| {
+        PathBuf::from(local_app_data).join("Xpic").join(".cache")
+    })
 }
 
 async fn cache_images() {
@@ -42,7 +41,8 @@ async fn cache_images() {
                 }
             })
         },
-    ]).await;
+    ])
+    .await;
 }
 
 fn get_cached_images() -> Vec<PathBuf> {
