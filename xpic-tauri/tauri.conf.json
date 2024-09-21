@@ -1,11 +1,12 @@
 {
+  "$schema": "https://schema.tauri.app/config/2.0.0-rc",
   "productName": "Xpic",
   "version": "0.2.0",
   "identifier": "xpic",
   "build": {
     "beforeBuildCommand": "task build-web",
-    "devUrl": "http://localhost:1420",
     "beforeDevCommand": "task dev-web",
+    "devUrl": "http://localhost:1420",
     "frontendDist": "../xpic-web/dist"
   },
   "app": {
