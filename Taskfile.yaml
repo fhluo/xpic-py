@@ -8,7 +8,7 @@ tasks:
   setup-web:
     dir: xpic-web
     cmds:
-      - pnpm install
+      - bun install
 
   setup:
     deps:
@@ -18,17 +18,17 @@ tasks:
   build-web:
     dir: xpic-web
     cmds:
-      - pnpm build
+      - bun run build
 
   dev-web:
     dir: xpic-web
     cmds:
-      - pnpm dev
+      - bun run dev
 
   ui-add:
     dir: xpic-web
     cmds:
-      - pnpm shadcn-svelte add {{.CLI_ARGS}}
+      - bun shadcn-svelte add {{.CLI_ARGS}}
 
   build-cli:
     cmds:
