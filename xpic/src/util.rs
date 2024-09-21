@@ -1,5 +1,4 @@
-use image::io::{Reader as ImageReader, Reader};
-use image::{DynamicImage, ImageFormat};
+use image::{DynamicImage, ImageFormat, ImageReader};
 use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
@@ -7,7 +6,9 @@ use std::path::{Path, PathBuf};
 use std::{fs, io};
 use url::Url;
 
-fn new_image_reader<P: AsRef<Path>>(path: P) -> Result<Reader<BufReader<File>>, Box<dyn Error>> {
+fn new_image_reader<P: AsRef<Path>>(
+    path: P,
+) -> Result<ImageReader<BufReader<File>>, Box<dyn Error>> {
     let file = match File::open(&path) {
         Ok(file) => file,
         Err(e) => {
