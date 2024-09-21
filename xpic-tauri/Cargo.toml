@@ -10,6 +10,10 @@ tauri-build = { version = "2.0.0-rc", features = [] }
 name = "xpic_lib"
 crate-type = ["lib", "cdylib", "staticlib"]
 
+[[bin]]
+name = "Xpic"
+path = "src/main.rs"
+
 [dependencies]
 xpic = { path = "../xpic" }
 tauri = { version = "2.0.0-rc", features = ["protocol-asset"] }
