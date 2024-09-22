@@ -1,14 +1,14 @@
 <script lang="ts">
     import {convertFileSrc, invoke} from "@tauri-apps/api/core";
-    import {getCurrentWindow, LogicalSize, Window} from "@tauri-apps/api/window";
+    import {getCurrentWindow, LogicalSize} from "@tauri-apps/api/window";
     import {basename} from "@tauri-apps/api/path";
     import 'overlayscrollbars/overlayscrollbars.css';
     import {OverlayScrollbarsComponent} from "overlayscrollbars-svelte";
     import {open} from "@tauri-apps/plugin-shell";
-    import * as ContextMenu from "$lib/components/ui/context-menu";
-    import {Download, Image, OpenInNewWindow} from "svelte-radix";
+    import {ExternalLink, Image, Save} from "lucide-svelte";
     import {save} from "@tauri-apps/plugin-dialog";
     import {copyFile} from "@tauri-apps/plugin-fs";
+    import {ContextMenu} from "bits-ui";
 
     let wallpapers = $state([] as string[]);
     // get base names for wallpapers
@@ -96,76 +96,69 @@
     })
 
     let menus = $state([] as boolean[])
+
+    function saveWallpaper(path: string) {
+        save({
+            filters: [{
+                name: "Image",
+                extensions: ["png", "jpg", "jpeg"]
+            }]
+        }).then(filename => {
+            if (filename) {
+                copyFile(path, filename)
+            }
+        })
+    }
+
+    function closeOtherMenus(i: number) {
+        for (let j = 0; j < menus.length; j++) {
+            if (i !== j) {
+                menus[j] = false
+            }
+        }
+    }
 </script>
 
 <main>
-    <OverlayScrollbarsComponent defer>
-        <div class="w-screen h-screen grid items-center justify-center">
-            <div id="gallery" bind:this={gallery}
-                 class="grid grid-cols-4 gap-8 items-center justify-center py-8 px-16"
-            >
-                {#each wallpapers as path, i}
-                    <ContextMenu.Root bind:open={menus[i]} onOpenChange={value => {
-                        if (value) {
-                            for(let j = 0; j < menus.length; j++) {
-                              if (i !== j) {
-                                  menus[j] = false
-                              }
-                            }
-                        }
-                    }}>
-                        <ContextMenu.Trigger>
-                            <img src={convertFileSrc(path)}
-                                 alt={names[path]}
-                                 width={config.img.width}
-                                 height={config.img.height}
-                                 class="wallpaper rounded hover:brightness-125 hover:drop-shadow select-none"
-                                 ondblclick={() => void open(path)}
-                            />
-                        </ContextMenu.Trigger>
-                        <ContextMenu.Content>
-                            <ContextMenu.Item onclick={() => void open(path)}>
-                                <div class="flex flex-row justify-center items-center gap-2">
-                                    <div class="text-gray-600">
-                                        <OpenInNewWindow/>
-                                    </div>
-                                    <div>Open wallpaper</div>
-                                </div>
-                            </ContextMenu.Item>
-                            <ContextMenu.Item onclick={async () => {
-                                const filename = await save({
-                                    filters: [{
-                                        name: "Image",
-                                        extensions: ["png", "jpg", "jpeg"]
-                                    }]
-                                })
-                                
-                                if (filename) {
-                                    await copyFile(path, filename)
-                                }
-                            }}>
-                                <div class="flex flex-row justify-center items-center gap-2">
-                                    <div class="text-gray-600">
-                                        <Download/>
-                                    </div>
-                                    <div>Save wallpaper</div>
-                                </div>
-                            </ContextMenu.Item>
-                            <ContextMenu.Item onclick={() => invoke("set_as_desktop_wallpaper", {path})}>
-                                <div class="flex flex-row justify-center items-center gap-2">
-                                    <div class="text-gray-600">
-                                        <Image/>
-                                    </div>
-                                    <div>Set as desktop wallpaper</div>
-                                </div>
-                            </ContextMenu.Item>
-                        </ContextMenu.Content>
-                    </ContextMenu.Root>
-                {/each}
-            </div>
-        </div>
-    </OverlayScrollbarsComponent>
+  <OverlayScrollbarsComponent defer>
+    <div class="w-screen h-screen grid items-center justify-center">
+      <div id="gallery" bind:this={gallery}
+           class="grid grid-cols-4 gap-8 items-center justify-center py-8 px-16"
+      >
+        {#each wallpapers as path, i}
+          <ContextMenu.Root bind:open={menus[i]} onOpenChange={value => {if (value) {closeOtherMenus(i)}}}>
+            <ContextMenu.Trigger>
+              <img src={convertFileSrc(path)}
+                   alt={names[path]}
+                   width={config.img.width}
+                   height={config.img.height}
+                   class="wallpaper rounded hover:brightness-125 hover:drop-shadow select-none"
+                   ondblclick={() => void open(path)}
+              />
+            </ContextMenu.Trigger>
+            <ContextMenu.Content class="menu">
+              <ContextMenu.Item class="menu-item" onclick={() => void open(path)}>
+                <div class="flex flex-row justify-center items-center gap-3">
+                    <ExternalLink strokeWidth={1} size={20}/>
+                  <div>Open wallpaper</div>
+                </div>
+              </ContextMenu.Item>
+              <ContextMenu.Item class="menu-item" onclick={()=>{saveWallpaper(path)}}>
+                <div class="flex flex-row justify-center items-center gap-3">
+                    <Save strokeWidth={1} size={20}/>
+                  <div>Save wallpaper</div>
+                </div>
+              </ContextMenu.Item>
+              <ContextMenu.Item class="menu-item" onclick={() => invoke("set_as_desktop_wallpaper", {path})}>
+                <div class="flex flex-row justify-center items-center gap-3">
+                    <Image strokeWidth={1} size={20}/>
+                  <div>Set as desktop wallpaper</div>
+                </div>
+              </ContextMenu.Item>
+            </ContextMenu.Content>
+          </ContextMenu.Root>
+        {/each}
+      </div>
+    </div>
+  </OverlayScrollbarsComponent>
 </main>
-
-<style>
-</style>
