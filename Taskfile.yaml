@@ -3,7 +3,7 @@ version: "3"
 tasks:
   setup-tauri:
     cmds:
-      - cargo install tauri-cli
+      - cargo install tauri-cli --version "^2.0.0-rc"
 
   setup-web:
     dir: xpic-web
@@ -31,12 +31,17 @@ tasks:
       - bun shadcn-svelte add {{.CLI_ARGS}}
 
   build-cli:
+    dir: xpic-cli
     cmds:
-      - cargo build --manifest-path=xpic-cli/Cargo.toml {{.CLI_ARGS}}
+      - cargo build {{.CLI_ARGS}}
 
   build:
     cmds:
       - cargo tauri build
+
+  debug:
+    cmds:
+      - cargo tauri build --debug
 
   dev:
     cmds:
