@@ -2,6 +2,7 @@ use crate::util;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
+use std::fs;
 use std::path::Path;
 use url::Url;
 
@@ -186,21 +187,24 @@ pub async fn get_images() -> Result<Vec<Url>, Box<dyn Error>> {
 
 /// Copies images to a specified directory.
 pub async fn copy_images_to<P: AsRef<Path>>(dst: P) -> Result<(), Box<dyn Error>> {
+    let dst = dst.as_ref();
+    
+    fs::create_dir_all(dst)
+        .map_err(|err| format!("failed to create {}: {}", dst.display(), err))?;
+    
     let tasks = query(Query::default())
         .await?
         .into_iter()
         .filter_map(|image| {
-            let dst = dst.as_ref().join(image.filename());
+            let dst = dst.join(image.filename());
             if dst.exists() {
                 return None;
             }
 
             Some(tokio::spawn(async move {
-                util::download_file(&image.url, dst)
-                    .await
-                    .unwrap_or_else(|e| {
-                        eprintln!("failed to download {}: {}", image.url, e);
-                    })
+                if let Err(e) = util::download_file(&image.url, dst).await {
+                    eprintln!("failed to download {}: {}", image.url, e);
+                }
             }))
         });
 

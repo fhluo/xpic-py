@@ -6,39 +6,29 @@ use std::path::{Path, PathBuf};
 use std::{fs, io};
 use url::Url;
 
+/// Returns image reader with guessed format.
 fn new_image_reader<P: AsRef<Path>>(
     path: P,
 ) -> Result<ImageReader<BufReader<File>>, Box<dyn Error>> {
-    let file = match File::open(&path) {
-        Ok(file) => file,
-        Err(e) => {
-            return Err(format!("failed to open file: {}", e).into());
-        }
-    };
+    let file = File::open(&path).map_err(|e| format!("failed to open file: {e}"))?;
 
-    match ImageReader::new(BufReader::new(file)).with_guessed_format() {
-        Ok(reader) => Ok(reader),
-        Err(e) => Err(format!("failed to read image: {}", e).into()),
-    }
+    ImageReader::new(BufReader::new(file))
+        .with_guessed_format()
+        .map_err(|e| format!("failed to read image: {e}").into())
 }
 
 /// Opens image with guessed format.
 pub fn open_image<P: AsRef<Path>>(path: P) -> Result<DynamicImage, Box<dyn Error>> {
-    match new_image_reader(path)?.decode() {
-        Ok(img) => Ok(img),
-        Err(e) => Err(format!("failed to decode image: {}", e).into()),
-    }
+    new_image_reader(path)?
+        .decode()
+        .map_err(|e| format!("failed to decode image: {e}").into())
 }
 
 /// Returns image format.
 pub fn get_image_format<P: AsRef<Path>>(path: P) -> Result<ImageFormat, Box<dyn Error>> {
-    match new_image_reader(path) {
-        Ok(reader) => match reader.format() {
-            Some(format) => Ok(format),
-            None => Err("failed to get image format".into()),
-        },
-        Err(e) => Err(format!("failed to get image format: {}", e).into()),
-    }
+    new_image_reader(path)?
+        .format()
+        .ok_or_else(|| "failed to get image format".into())
 }
 
 /// Copies image from src to dst.
@@ -51,23 +41,21 @@ pub fn copy_image<P: AsRef<Path>, Q: AsRef<Path>>(
         return Ok(());
     }
 
-    let mut dst = PathBuf::from(dst.as_ref());
+    // If dst is a directory, append src filename to dst.
+    let mut dst = if dst.as_ref().is_dir() {
+        dst.as_ref()
+            .join(src.as_ref().file_name().ok_or("failed to get filename")?)
+    } else {
+        PathBuf::from(dst.as_ref())
+    };
 
-    if dst.is_dir() {
-        let filename = match src.as_ref().file_name() {
-            Some(filename) => filename,
-            None => return Err("failed to get filename".into()),
-        };
-
-        dst = dst.join(filename);
-    }
-
+    // Set dst extension to match src image format.
     if set_extension {
         dst.set_extension(
             get_image_format(src.as_ref())?
                 .extensions_str()
                 .first()
-                .unwrap(),
+                .ok_or("failed to get image extension")?,
         );
     }
 
@@ -75,6 +63,7 @@ pub fn copy_image<P: AsRef<Path>, Q: AsRef<Path>>(
     Ok(())
 }
 
+/// Downloads file from url to dst.
 pub async fn download_file<P: AsRef<Path>>(url: &Url, dst: P) -> Result<(), Box<dyn Error>> {
     if dst.as_ref().exists() {
         return Ok(());

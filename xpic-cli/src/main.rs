@@ -37,41 +37,40 @@ enum Commands {
 }
 
 fn list_spotlight_wallpapers() {
-    match spotlight::get_images() {
-        Ok(images) => images
-            .into_iter()
-            .for_each(|path| println!("{}", path.display())),
-        Err(e) => eprintln!("failed to get Windows Spotlight wallpapers: {}", e),
+    if let Err(e) = spotlight::get_images().map(|images| {
+        images.into_iter().for_each(|path| println!("{}", path.display()))
+    }) {
+        eprintln!("failed to get Windows Spotlight wallpapers: {e}")
     }
 }
 
 async fn list_bing_wallpapers() {
-    match bing::get_images().await {
-        Ok(images) => images.into_iter().for_each(|u| println!("{}", u)),
-        Err(e) => eprintln!("failed to get Bing wallpapers: {}", e),
+    if let Err(e) = bing::get_images().await.map(|images| {
+        images.into_iter().for_each(|u| println!("{u}"))
+    }) {
+        eprintln!("failed to get Bing wallpapers: {e}");
     }
 }
 
 async fn list_wallpapers(spotlight: bool, bing: bool) {
     let all = !(spotlight || bing);
 
-    futures::future::join_all(
-        vec![
-            if all || spotlight {
-                Some(tokio::spawn(async { list_spotlight_wallpapers() }))
-            } else {
-                None
-            },
-            if all || bing {
-                Some(tokio::spawn(list_bing_wallpapers()))
-            } else {
-                None
-            },
-        ]
+    let tasks = vec![
+        if all || spotlight {
+            Some(tokio::spawn(async { list_spotlight_wallpapers() }))
+        } else {
+            None
+        },
+        if all || bing {
+            Some(tokio::spawn(list_bing_wallpapers()))
+        } else {
+            None
+        },
+    ]
         .into_iter()
-        .filter_map(|handle| handle),
-    )
-    .await;
+        .filter_map(|handle| handle);
+
+    futures::future::join_all(tasks).await;
 }
 
 fn save_spotlight_wallpapers<P: AsRef<Path>>(dir: P) {
@@ -97,25 +96,24 @@ async fn save_bing_wallpapers<P: AsRef<Path>>(dir: P) {
 async fn save_wallpapers(dir: &PathBuf, spotlight: bool, bing: bool) {
     let all = !(spotlight || bing);
 
-    futures::future::join_all(
-        vec![
-            if all || spotlight {
-                let dir = dir.to_owned();
-                Some(tokio::spawn(async { save_spotlight_wallpapers(dir) }))
-            } else {
-                None
-            },
-            if all || bing {
-                let dir = dir.to_owned();
-                Some(tokio::spawn(save_bing_wallpapers(dir)))
-            } else {
-                None
-            },
-        ]
+    let tasks = vec![
+        if all || spotlight {
+            let dir = dir.clone();
+            Some(tokio::spawn(async { save_spotlight_wallpapers(dir) }))
+        } else {
+            None
+        },
+        if all || bing {
+            let dir = dir.clone();
+            Some(tokio::spawn(save_bing_wallpapers(dir)))
+        } else {
+            None
+        },
+    ]
         .into_iter()
-        .filter_map(|handle| handle),
-    )
-    .await;
+        .filter_map(|handle| handle);
+
+    futures::future::join_all(tasks).await;
 }
 
 #[tokio::main]
