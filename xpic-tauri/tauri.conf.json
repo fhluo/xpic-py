@@ -18,7 +18,8 @@
         "width": 1184,
         "height": 700,
         "transparent": true,
-        "center": true
+        "center": true,
+        "theme": "Dark"
       }
     ],
     "security": {
