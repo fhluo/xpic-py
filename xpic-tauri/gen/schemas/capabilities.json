@@ -1,1 +1,21 @@
-{"default":{"identifier":"default","description":"Capability for the main window","local":true,"windows":["main"],"permissions":["core:default","shell:allow-open","core:window:allow-center","core:window:allow-set-size","core:window:allow-set-min-size","dialog:default","dialog:allow-save","fs:default","fs:allow-copy-file"]}}
+{
+  "default": {
+    "identifier": "default",
+    "description": "Capability for the main window",
+    "local": true,
+    "windows": [
+      "main"
+    ],
+    "permissions": [
+      "core:default",
+      "shell:allow-open",
+      "core:window:allow-center",
+      "core:window:allow-set-size",
+      "core:window:allow-set-min-size",
+      "dialog:default",
+      "dialog:allow-save",
+      "fs:default",
+      "fs:allow-copy-file"
+    ]
+  }
+}
