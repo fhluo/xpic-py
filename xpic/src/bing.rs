@@ -6,7 +6,7 @@ use std::fs;
 use std::path::Path;
 use url::Url;
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 pub struct Query {
     format: &'static str,
 
@@ -18,15 +18,58 @@ pub struct Query {
 
     #[serde(rename = "mkt", skip_serializing_if = "Option::is_none")]
     market: Option<String>,
+
+    #[serde(
+        serialize_with = "bool_to_int",
+        deserialize_with = "int_to_bool",
+        skip_serializing_if = "Option::is_none"
+    )]
+    uhd: Option<bool>,
+
+    #[serde(rename = "uhdwidth", skip_serializing_if = "Option::is_none")]
+    uhd_width: Option<usize>,
+
+    #[serde(rename = "uhdheight", skip_serializing_if = "Option::is_none")]
+    uhd_height: Option<usize>,
+
+    #[serde(
+        rename = "ensearch",
+        serialize_with = "bool_to_int",
+        deserialize_with = "int_to_bool",
+        skip_serializing_if = "Option::is_none"
+    )]
+    en_search: Option<bool>,
+
+    #[serde(rename = "setmkt", skip_serializing_if = "Option::is_none")]
+    set_market: Option<String>,
+
+    #[serde(rename = "setlang", skip_serializing_if = "Option::is_none")]
+    set_lang: Option<String>,
+}
+
+fn bool_to_int<S>(b: &Option<bool>, s: S) -> Result<S::Ok, S::Error>
+where
+    S: serde::Serializer,
+{
+    s.serialize_i32(if b.unwrap_or(false) { 1 } else { 0 })
+}
+
+fn int_to_bool<'de, D>(d: D) -> Result<Option<bool>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let i: Option<i32> = Option::deserialize(d)?;
+
+    Ok(i.map(|i| i == 1))
 }
 
 impl Query {
-    pub fn new(format: &'static str, index: usize, number: usize, market: Option<String>) -> Self {
+    pub fn new(format: &'static str, index: usize, number: usize) -> Self {
         Self {
             format,
             index,
             number,
-            market,
+            ..Self::default()
         }
     }
 }
@@ -38,6 +81,12 @@ impl Default for Query {
             index: 0,
             number: 8,
             market: None,
+            uhd: Some(true),
+            uhd_width: Some(3840),
+            uhd_height: Some(2160),
+            en_search: Some(true),
+            set_market: Some("en-US".to_string()),
+            set_lang: Some("en-US".to_string()),
         }
     }
 }
@@ -64,7 +113,7 @@ pub struct Image {
 impl From<ImageInfo> for Image {
     fn from(image_info: ImageInfo) -> Self {
         Self {
-            url: Url::parse("https://cn.bing.com/")
+            url: Url::parse("https://www.bing.com/")
                 .unwrap()
                 .join(image_info.url.as_str())
                 .unwrap(),
@@ -97,8 +146,7 @@ impl Default for ParsedID {
 
 impl From<&str> for ParsedID {
     fn from(id: &str) -> Self {
-        let re = Regex::new(
-            r"(?x)
+        let re = Regex::new(r"(?x)
 ^OHR
 \.
 (?P<name>\w+)
@@ -110,9 +158,7 @@ _
 x
 (?P<height>\d+)
 \.
-(?P<extension>\w+)$",
-        )
-        .unwrap();
+(?P<extension>\w+)$").unwrap();
 
         match re.captures(id) {
             Some(captures) => Self {
@@ -156,11 +202,13 @@ impl Image {
 }
 
 pub async fn query(query: Query) -> Result<Vec<Image>, Box<dyn Error>> {
-    let resp = reqwest::Client::new()
-        .get("https://cn.bing.com/HPImageArchive.aspx")
+    let client = reqwest::Client::new();
+    let request = client
+        .get("https://global.bing.com/HPImageArchive.aspx")
         .query(&query)
-        .send()
-        .await?;
+        .build()?;
+
+    let resp = client.execute(request).await?;
 
     if !resp.status().is_success() {
         return Err(format!("failed to get images response: {}", resp.status()).into());
@@ -188,10 +236,10 @@ pub async fn get_images() -> Result<Vec<Url>, Box<dyn Error>> {
 /// Copies images to a specified directory.
 pub async fn copy_images_to<P: AsRef<Path>>(dst: P) -> Result<(), Box<dyn Error>> {
     let dst = dst.as_ref();
-    
+
     fs::create_dir_all(dst)
         .map_err(|err| format!("failed to create {}: {}", dst.display(), err))?;
-    
+
     let tasks = query(Query::default())
         .await?
         .into_iter()
