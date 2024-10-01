@@ -5,10 +5,11 @@
     import 'overlayscrollbars/overlayscrollbars.css';
     import {OverlayScrollbarsComponent} from "overlayscrollbars-svelte";
     import {open} from "@tauri-apps/plugin-shell";
-    import {ExternalLink, Image, Save} from "lucide-svelte";
+    import {ExternalLink, FolderOpen, Image, Save} from "lucide-svelte";
     import {save} from "@tauri-apps/plugin-dialog";
     import {copyFile} from "@tauri-apps/plugin-fs";
     import {ContextMenu} from "bits-ui";
+    import {menu} from "@tauri-apps/api";
 
     let wallpapers = $state([] as string[]);
     // get base names for wallpapers
@@ -27,11 +28,15 @@
     $effect(() => {
         invoke<string[]>("get_wallpapers").then(r => {
             wallpapers = r
+            menus = new Array(r.length).fill(false)
         });
 
         invoke<string[]>("update_wallpapers").then(r =>
             r.filter(v => !wallpapers.includes(v)).forEach(
-                v => wallpapers.push(v)
+                v => {
+                    wallpapers.push(v)
+                    menus.push(false)
+                }
             )
         );
     })
@@ -117,6 +122,10 @@
             }
         }
     }
+
+    function showInExplorer(path: string) {
+        invoke("show_path_in_file_manager", {path})
+    }
 </script>
 
 <main>
@@ -132,26 +141,32 @@
                    alt={names[path]}
                    width={config.img.width}
                    height={config.img.height}
-                   class="wallpaper rounded hover:brightness-125 hover:drop-shadow select-none"
+                   class="wallpaper"
                    ondblclick={() => void open(path)}
               />
             </ContextMenu.Trigger>
             <ContextMenu.Content class="menu">
               <ContextMenu.Item class="menu-item" onclick={() => void open(path)}>
                 <div class="flex flex-row justify-center items-center gap-3">
-                    <ExternalLink strokeWidth={1} size={20}/>
+                  <ExternalLink strokeWidth={1} size={20}/>
                   <div>Open wallpaper</div>
+                </div>
+              </ContextMenu.Item>
+              <ContextMenu.Item class="menu-item" onclick={() => {showInExplorer(path)}}>
+                <div class="flex flex-row justify-center items-center gap-3">
+                  <FolderOpen strokeWidth={1} size={20}/>
+                  <div>Show in Explorer</div>
                 </div>
               </ContextMenu.Item>
               <ContextMenu.Item class="menu-item" onclick={()=>{saveWallpaper(path)}}>
                 <div class="flex flex-row justify-center items-center gap-3">
-                    <Save strokeWidth={1} size={20}/>
+                  <Save strokeWidth={1} size={20}/>
                   <div>Save wallpaper</div>
                 </div>
               </ContextMenu.Item>
               <ContextMenu.Item class="menu-item" onclick={() => invoke("set_as_desktop_wallpaper", {path})}>
                 <div class="flex flex-row justify-center items-center gap-3">
-                    <Image strokeWidth={1} size={20}/>
+                  <Image strokeWidth={1} size={20}/>
                   <div>Set as desktop wallpaper</div>
                 </div>
               </ContextMenu.Item>

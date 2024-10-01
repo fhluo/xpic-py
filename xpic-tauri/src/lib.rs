@@ -1,6 +1,6 @@
 use std::ffi::CString;
 use std::os::raw::c_void;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::{env, vec};
 
 use tauri::Manager;
@@ -85,6 +85,11 @@ async fn set_as_desktop_wallpaper(path: String) {
     }
 }
 
+#[tauri::command]
+async fn show_path_in_file_manager(path: String) {
+    showfile::show_path_in_file_manager(path)
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -106,7 +111,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             get_wallpapers,
             update_wallpapers,
-            set_as_desktop_wallpaper
+            set_as_desktop_wallpaper,
+            show_path_in_file_manager,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

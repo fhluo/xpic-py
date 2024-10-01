@@ -15,3 +15,11 @@ body {
 .menu-item {
     @apply flex h-9 select-none items-center rounded py-1 pl-3 pr-2 text-sm font-medium text-white hover:bg-gray-800;
 }
+
+.wallpaper {
+    @apply rounded select-none;
+}
+
+.wallpaper:hover {
+    @apply brightness-125 drop-shadow;
+}
