@@ -1,0 +1,9 @@
+{
+  "menus": {
+    "open_wallpaper": "使用默认图片查看器打开",
+    "show_in_explorer": "在资源管理器中显示",
+    "copy_image": "复制",
+    "save_wallpaper": "另存为 ...",
+    "set_as_desktop_wallpaper": "设为桌面壁纸"
+  }
+}

@@ -1,4 +1,5 @@
 import './app.css'
+import './i18n'
 import App from './app.svelte'
 import {mount} from "svelte";
 

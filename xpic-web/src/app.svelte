@@ -7,11 +7,9 @@
     import {open} from "@tauri-apps/plugin-shell";
     import {Copy, ExternalLink, FolderOpen, Image as ImageIcon, Save} from "lucide-svelte";
     import {save} from "@tauri-apps/plugin-dialog";
-    import {copyFile, readFile} from "@tauri-apps/plugin-fs";
+    import {copyFile} from "@tauri-apps/plugin-fs";
     import {ContextMenu} from "bits-ui";
-    import {menu} from "@tauri-apps/api";
-    import {writeImage} from "@tauri-apps/plugin-clipboard-manager";
-    import {Image, transformImage} from "@tauri-apps/api/image";
+    import {_} from "svelte-i18n";
 
     let wallpapers = $state([] as string[]);
     // get base names for wallpapers
@@ -159,33 +157,33 @@
               <ContextMenu.Item class="menu-item" onclick={() => void open(path)}>
                 <div class="flex flex-row justify-center items-center gap-3">
                   <ExternalLink strokeWidth={1.5} size={20}/>
-                  <div>Open Wallpaper</div>
+                  <div>{$_("menus.open_wallpaper", {default: "Open Wallpaper"})}</div>
                 </div>
               </ContextMenu.Item>
               <ContextMenu.Item class="menu-item" onclick={() => {showInExplorer(path)}}>
                 <div class="flex flex-row justify-center items-center gap-3">
                   <FolderOpen strokeWidth={1.5} size={20}/>
-                  <div>Show In Explorer</div>
+                  <div>{$_("menus.show_in_explorer", {default: "Show In Explorer"})}</div>
                 </div>
               </ContextMenu.Item>
               <ContextMenu.Separator class="menu-separator"/>
               <ContextMenu.Item class="menu-item" onclick={() => {copyImageToClipboard(path)}}>
                 <div class="flex flex-row justify-center items-center gap-3">
                   <Copy strokeWidth={1.5} size={20}/>
-                  <div>Copy Image</div>
+                  <div>{$_("menus.copy_image", {default: "Copy Image"})}</div>
                 </div>
               </ContextMenu.Item>
               <ContextMenu.Item class="menu-item" onclick={()=>{saveWallpaper(path)}}>
                 <div class="flex flex-row justify-center items-center gap-3">
                   <Save strokeWidth={1.5} size={20}/>
-                  <div>Save Wallpaper</div>
+                  <div>{$_("menus.save_wallpaper", {default: "Save Wallpaper"})}</div>
                 </div>
               </ContextMenu.Item>
               <ContextMenu.Separator class="menu-separator"/>
               <ContextMenu.Item class="menu-item" onclick={() => {setAsDesktopWallpaper(path)}}>
                 <div class="flex flex-row justify-center items-center gap-3">
                   <ImageIcon strokeWidth={1.5} size={20}/>
-                  <div>Set As Desktop Wallpaper</div>
+                  <div>{$_("menus.set_as_desktop_wallpaper", {default: "Set As Desktop Wallpaper"})}</div>
                 </div>
               </ContextMenu.Item>
             </ContextMenu.Content>
