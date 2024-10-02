@@ -149,7 +149,8 @@ impl Default for ParsedID {
 
 impl From<&str> for ParsedID {
     fn from(id: &str) -> Self {
-        let re = Regex::new(r"(?x)
+        let re = Regex::new(
+            r"(?x)
 ^OHR
 \.
 (?P<name>\w+)
@@ -163,7 +164,9 @@ _
 (?P<uhd>UHD)
 )
 \.
-(?P<extension>\w+)$").unwrap();
+(?P<extension>\w+)$",
+        )
+        .unwrap();
 
         match re.captures(id) {
             Some(captures) => {
@@ -185,7 +188,7 @@ _
                     },
                     extension: String::from(&captures["extension"]),
                 }
-            },
+            }
             None => ParsedID::default(),
         }
     }
@@ -208,13 +211,12 @@ impl Image {
         }
     }
 
-    pub fn filename(&self) -> String {
-        let parsed_id = ParsedID::from(self.id());
+    pub fn parsed_id(&self) -> ParsedID {
+        ParsedID::from(self.id())
+    }
 
-        format!(
-            "{}_{}.{}",
-            self.start_date, parsed_id.name, parsed_id.extension
-        )
+    pub fn filename(&self) -> String {
+        self.id()
     }
 }
 

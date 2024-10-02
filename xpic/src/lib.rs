@@ -31,9 +31,9 @@ mod tests {
                     extension: "jpg".to_string(),
                     ..ParsedID::default()
                 },
-            )
+            ),
         ];
-        
+
         for (id, expected) in cases {
             let parsed_id = ParsedID::from(id);
             assert_eq!(parsed_id, expected);
