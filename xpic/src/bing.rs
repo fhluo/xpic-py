@@ -122,10 +122,12 @@ impl From<ImageInfo> for Image {
     }
 }
 
+#[derive(Debug, PartialEq)]
 pub struct ParsedID {
     pub name: String,
     pub market: String,
     pub number: usize,
+    pub uhd: bool,
     pub width: usize,
     pub height: usize,
     pub extension: String,
@@ -137,6 +139,7 @@ impl Default for ParsedID {
             name: String::default(),
             market: String::default(),
             number: 0,
+            uhd: false,
             width: 0,
             height: 0,
             extension: String::default(),
@@ -154,20 +157,34 @@ _
 (?P<market>ROW|\w{2}-\w{2})
 (?P<number>\d+)
 _
-(?P<width>\d+)
-x
-(?P<height>\d+)
+(
+(?P<width>\d+)x(?P<height>\d+)
+|
+(?P<uhd>UHD)
+)
 \.
 (?P<extension>\w+)$").unwrap();
 
         match re.captures(id) {
-            Some(captures) => Self {
-                name: String::from(&captures["name"]),
-                market: String::from(&captures["market"]),
-                number: captures["number"].parse::<usize>().unwrap(),
-                width: captures["width"].parse::<usize>().unwrap(),
-                height: captures["height"].parse::<usize>().unwrap(),
-                extension: String::from(&captures["extension"]),
+            Some(captures) => {
+                let uhd = captures.name("uhd").is_some();
+                Self {
+                    name: String::from(&captures["name"]),
+                    market: String::from(&captures["market"]),
+                    number: captures["number"].parse::<usize>().unwrap(),
+                    uhd,
+                    width: if uhd {
+                        0
+                    } else {
+                        captures["width"].parse::<usize>().unwrap()
+                    },
+                    height: if uhd {
+                        0
+                    } else {
+                        captures["height"].parse::<usize>().unwrap()
+                    },
+                    extension: String::from(&captures["extension"]),
+                }
             },
             None => ParsedID::default(),
         }

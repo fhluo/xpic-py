@@ -8,14 +8,35 @@ mod tests {
 
     #[test]
     fn test_parsed_id() {
-        let id = "OHR.YosemiteFirefall_ROW8895162487_1920x1080.jpg";
-        let parsed_id = ParsedID::from(id);
-
-        assert_eq!(parsed_id.name, "YosemiteFirefall");
-        assert_eq!(parsed_id.market, "ROW");
-        assert_eq!(parsed_id.number, 8895162487);
-        assert_eq!(parsed_id.width, 1920);
-        assert_eq!(parsed_id.height, 1080);
-        assert_eq!(parsed_id.extension, "jpg")
+        let cases = vec![
+            (
+                "OHR.YosemiteFirefall_ROW8895162487_1920x1080.jpg",
+                ParsedID {
+                    name: "YosemiteFirefall".to_string(),
+                    market: "ROW".to_string(),
+                    number: 8895162487,
+                    width: 1920,
+                    height: 1080,
+                    extension: "jpg".to_string(),
+                    ..ParsedID::default()
+                },
+            ),
+            (
+                "OHR.HalfDomeYosemite_EN-US4890007214_UHD.jpg",
+                ParsedID {
+                    name: "HalfDomeYosemite".to_string(),
+                    market: "EN-US".to_string(),
+                    number: 4890007214,
+                    uhd: true,
+                    extension: "jpg".to_string(),
+                    ..ParsedID::default()
+                },
+            )
+        ];
+        
+        for (id, expected) in cases {
+            let parsed_id = ParsedID::from(id);
+            assert_eq!(parsed_id, expected);
+        }
     }
 }
