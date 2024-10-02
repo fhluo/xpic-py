@@ -1,7 +1,7 @@
 <script lang="ts">
     import {convertFileSrc, invoke} from "@tauri-apps/api/core";
     import {getCurrentWindow, LogicalSize} from "@tauri-apps/api/window";
-    import {basename} from "@tauri-apps/api/path";
+    import {basename, BaseDirectory, resolve, pictureDir} from "@tauri-apps/api/path";
     import 'overlayscrollbars/overlayscrollbars.css';
     import {OverlayScrollbarsComponent} from "overlayscrollbars-svelte";
     import {open} from "@tauri-apps/plugin-shell";
@@ -102,8 +102,9 @@
 
     let menus = $state([] as boolean[])
 
-    function saveWallpaper(path: string) {
+    async function saveWallpaper(path: string) {
         save({
+            defaultPath: await resolve(await pictureDir(), await basename(path)),
             filters: [{
                 name: "Image",
                 extensions: ["png", "jpg", "jpeg"]
