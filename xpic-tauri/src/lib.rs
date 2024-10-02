@@ -1,9 +1,12 @@
+use image::{GenericImageView, ImageReader};
+use std::error::Error;
 use std::ffi::CString;
 use std::os::raw::c_void;
 use std::path::{Path, PathBuf};
 use std::{env, vec};
-
-use tauri::Manager;
+use tauri::image::Image;
+use tauri::{AppHandle, Manager};
+use tauri_plugin_clipboard_manager::ClipboardExt;
 use window_vibrancy::apply_mica;
 use windows::Win32::UI::WindowsAndMessaging::{
     SystemParametersInfoA, SPIF_UPDATEINIFILE, SPI_SETDESKWALLPAPER,
@@ -42,7 +45,7 @@ async fn cache_images() {
             })
         },
     ])
-    .await;
+        .await;
 }
 
 fn get_cached_images() -> Vec<PathBuf> {
@@ -90,9 +93,28 @@ async fn show_path_in_file_manager(path: String) {
     showfile::show_path_in_file_manager(path)
 }
 
+fn load_image(path: impl AsRef<Path>) -> Result<Image<'static>, Box<dyn Error>> {
+    let img = ImageReader::open(path)?.decode()?;
+    let (width, height) = img.dimensions();
+
+    Ok(Image::new_owned(img.into_rgba8().into_raw(), width, height))
+}
+
+fn write_image_to_clipboard(app_handle: AppHandle, path: impl AsRef<Path>) -> Result<(), Box<dyn Error>> {
+    app_handle.clipboard().write_image(&(load_image(path)?))?;
+
+    Ok(())
+}
+
+#[tauri::command]
+async fn copy_image(app_handle: AppHandle, path: String) -> Result<(), String> {
+    write_image_to_clipboard(app_handle, path).map_err(|e| e.to_string())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_shell::init())
@@ -113,6 +135,7 @@ pub fn run() {
             update_wallpapers,
             set_as_desktop_wallpaper,
             show_path_in_file_manager,
+            copy_image,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

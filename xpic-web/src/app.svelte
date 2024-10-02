@@ -5,11 +5,13 @@
     import 'overlayscrollbars/overlayscrollbars.css';
     import {OverlayScrollbarsComponent} from "overlayscrollbars-svelte";
     import {open} from "@tauri-apps/plugin-shell";
-    import {ExternalLink, FolderOpen, Image, Save} from "lucide-svelte";
+    import {Copy, ExternalLink, FolderOpen, Image as ImageIcon, Save} from "lucide-svelte";
     import {save} from "@tauri-apps/plugin-dialog";
-    import {copyFile} from "@tauri-apps/plugin-fs";
+    import {copyFile, readFile} from "@tauri-apps/plugin-fs";
     import {ContextMenu} from "bits-ui";
     import {menu} from "@tauri-apps/api";
+    import {writeImage} from "@tauri-apps/plugin-clipboard-manager";
+    import {Image, transformImage} from "@tauri-apps/api/image";
 
     let wallpapers = $state([] as string[]);
     // get base names for wallpapers
@@ -126,6 +128,14 @@
     function showInExplorer(path: string) {
         invoke("show_path_in_file_manager", {path})
     }
+
+    function setAsDesktopWallpaper(path: string) {
+        invoke("set_as_desktop_wallpaper", {path})
+    }
+
+    function copyImageToClipboard(path: string) {
+        invoke("copy_image", {path})
+    }
 </script>
 
 <main>
@@ -148,27 +158,33 @@
             <ContextMenu.Content class="menu">
               <ContextMenu.Item class="menu-item" onclick={() => void open(path)}>
                 <div class="flex flex-row justify-center items-center gap-3">
-                  <ExternalLink strokeWidth={1} size={20}/>
+                  <ExternalLink strokeWidth={1.5} size={20}/>
                   <div>Open Wallpaper</div>
                 </div>
               </ContextMenu.Item>
               <ContextMenu.Item class="menu-item" onclick={() => {showInExplorer(path)}}>
                 <div class="flex flex-row justify-center items-center gap-3">
-                  <FolderOpen strokeWidth={1} size={20}/>
+                  <FolderOpen strokeWidth={1.5} size={20}/>
                   <div>Show In Explorer</div>
                 </div>
               </ContextMenu.Item>
               <ContextMenu.Separator class="menu-separator"/>
+              <ContextMenu.Item class="menu-item" onclick={() => {copyImageToClipboard(path)}}>
+                <div class="flex flex-row justify-center items-center gap-3">
+                  <Copy strokeWidth={1.5} size={20}/>
+                  <div>Copy Image</div>
+                </div>
+              </ContextMenu.Item>
               <ContextMenu.Item class="menu-item" onclick={()=>{saveWallpaper(path)}}>
                 <div class="flex flex-row justify-center items-center gap-3">
-                  <Save strokeWidth={1} size={20}/>
+                  <Save strokeWidth={1.5} size={20}/>
                   <div>Save Wallpaper</div>
                 </div>
               </ContextMenu.Item>
               <ContextMenu.Separator class="menu-separator"/>
-              <ContextMenu.Item class="menu-item" onclick={() => invoke("set_as_desktop_wallpaper", {path})}>
+              <ContextMenu.Item class="menu-item" onclick={() => {setAsDesktopWallpaper(path)}}>
                 <div class="flex flex-row justify-center items-center gap-3">
-                  <Image strokeWidth={1} size={20}/>
+                  <ImageIcon strokeWidth={1.5} size={20}/>
                   <div>Set As Desktop Wallpaper</div>
                 </div>
               </ContextMenu.Item>

@@ -14,6 +14,15 @@
     "dialog:default",
     "dialog:allow-save",
     "fs:default",
-    "fs:allow-copy-file"
+    {
+      "identifier": "fs:allow-read-file",
+      "allow": [
+        {
+          "path": "$LOCALDATA/Xpic/.cache/**"
+        }
+      ]
+    },
+    "fs:allow-copy-file",
+    "clipboard-manager:allow-write-image"
   ]
 }
