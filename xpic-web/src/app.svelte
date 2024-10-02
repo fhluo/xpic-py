@@ -149,25 +149,27 @@
               <ContextMenu.Item class="menu-item" onclick={() => void open(path)}>
                 <div class="flex flex-row justify-center items-center gap-3">
                   <ExternalLink strokeWidth={1} size={20}/>
-                  <div>Open wallpaper</div>
+                  <div>Open Wallpaper</div>
                 </div>
               </ContextMenu.Item>
               <ContextMenu.Item class="menu-item" onclick={() => {showInExplorer(path)}}>
                 <div class="flex flex-row justify-center items-center gap-3">
                   <FolderOpen strokeWidth={1} size={20}/>
-                  <div>Show in Explorer</div>
+                  <div>Show In Explorer</div>
                 </div>
               </ContextMenu.Item>
+              <ContextMenu.Separator class="menu-separator"/>
               <ContextMenu.Item class="menu-item" onclick={()=>{saveWallpaper(path)}}>
                 <div class="flex flex-row justify-center items-center gap-3">
                   <Save strokeWidth={1} size={20}/>
-                  <div>Save wallpaper</div>
+                  <div>Save Wallpaper</div>
                 </div>
               </ContextMenu.Item>
+              <ContextMenu.Separator class="menu-separator"/>
               <ContextMenu.Item class="menu-item" onclick={() => invoke("set_as_desktop_wallpaper", {path})}>
                 <div class="flex flex-row justify-center items-center gap-3">
                   <Image strokeWidth={1} size={20}/>
-                  <div>Set as desktop wallpaper</div>
+                  <div>Set As Desktop Wallpaper</div>
                 </div>
               </ContextMenu.Item>
             </ContextMenu.Content>
