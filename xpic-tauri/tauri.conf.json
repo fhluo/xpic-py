@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.tauri.app/config/2.0.0-rc",
+  "$schema": "https://schema.tauri.app/config/2.0.0",
   "productName": "Xpic",
   "version": "0.3.0",
   "identifier": "xpic",

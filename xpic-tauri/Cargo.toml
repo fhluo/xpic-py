@@ -16,18 +16,18 @@ path = "src/main.rs"
 
 [dependencies]
 xpic = { path = "../xpic" }
-tauri = { version = "2.0.0-rc", features = ["protocol-asset"] }
-tauri-plugin-shell = "2.0.0-rc"
+tauri = { version = "2.0", features = ["protocol-asset"] }
+tauri-plugin-shell = "2.0"
+tauri-plugin-fs = "2.0"
+tauri-plugin-dialog = "2.0"
+tauri-plugin-clipboard-manager = "2.0"
+window-vibrancy = "0.5"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 tokio = { version = "1.40", features = ["full"] }
 futures = "0.3"
 glob = "0.3"
-window-vibrancy = "0.5"
-tauri-plugin-fs = "2.0.0-rc"
-tauri-plugin-dialog = "2.0.0-rc"
 showfile = "0.1"
-tauri-plugin-clipboard-manager = "2.1.0-beta.7"
 image = "0.25"
 
 [dependencies.windows]
