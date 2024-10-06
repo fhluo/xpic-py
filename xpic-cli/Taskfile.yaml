@@ -4,3 +4,7 @@ tasks:
   build:
     cmds:
       - cargo build {{.CLI_ARGS}}
+
+  run:
+    cmds:
+      - cargo run {{.CLI_ARGS}}
