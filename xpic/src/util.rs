@@ -7,9 +7,7 @@ use std::{fs, io};
 use url::Url;
 
 /// Returns image reader with guessed format.
-fn new_image_reader<P: AsRef<Path>>(
-    path: P,
-) -> Result<ImageReader<BufReader<File>>, Box<dyn Error>> {
+fn new_image_reader(path: impl AsRef<Path>) -> Result<ImageReader<BufReader<File>>, Box<dyn Error>> {
     let file = File::open(&path).map_err(|e| format!("failed to open file: {e}"))?;
 
     ImageReader::new(BufReader::new(file))
@@ -18,29 +16,21 @@ fn new_image_reader<P: AsRef<Path>>(
 }
 
 /// Opens image with guessed format.
-pub fn open_image<P: AsRef<Path>>(path: P) -> Result<DynamicImage, Box<dyn Error>> {
+pub fn open_image(path: impl AsRef<Path>) -> Result<DynamicImage, Box<dyn Error>> {
     new_image_reader(path)?
         .decode()
         .map_err(|e| format!("failed to decode image: {e}").into())
 }
 
 /// Returns image format.
-pub fn get_image_format<P: AsRef<Path>>(path: P) -> Result<ImageFormat, Box<dyn Error>> {
+pub fn get_image_format(path: impl AsRef<Path>) -> Result<ImageFormat, Box<dyn Error>> {
     new_image_reader(path)?
         .format()
         .ok_or_else(|| "failed to get image format".into())
 }
 
 /// Copies image from src to dst.
-pub fn copy_image<P: AsRef<Path>, Q: AsRef<Path>>(
-    src: P,
-    dst: Q,
-    set_extension: bool,
-) -> Result<(), Box<dyn Error>> {
-    if dst.as_ref().exists() {
-        return Ok(());
-    }
-
+pub fn copy_image(src: impl AsRef<Path>, dst: impl AsRef<Path>, set_extension: bool) -> Result<(), Box<dyn Error>> {
     // If dst is a directory, append src filename to dst.
     let mut dst = if dst.as_ref().is_dir() {
         dst.as_ref()
@@ -48,6 +38,11 @@ pub fn copy_image<P: AsRef<Path>, Q: AsRef<Path>>(
     } else {
         PathBuf::from(dst.as_ref())
     };
+
+    // Check if dst exists after appending src filename if dst is a directory.
+    if dst.exists() {
+        return Ok(());
+    }
 
     // Set dst extension to match src image format.
     if set_extension {
@@ -64,7 +59,7 @@ pub fn copy_image<P: AsRef<Path>, Q: AsRef<Path>>(
 }
 
 /// Downloads file from url to dst.
-pub async fn download_file<P: AsRef<Path>>(url: &Url, dst: P) -> Result<(), Box<dyn Error>> {
+pub async fn download_file(url: &Url, dst: impl AsRef<Path>) -> Result<(), Box<dyn Error>> {
     if dst.as_ref().exists() {
         return Ok(());
     }

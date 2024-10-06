@@ -51,10 +51,6 @@ pub fn copy_images_to<P: AsRef<Path>>(dst: P) -> Result<(), Box<dyn Error>> {
     let images = get_images().map_err(|e| format!("failed to get images: {e}"))?;
 
     images.into_iter().for_each(|path| {
-        if dst.exists() {
-            return;
-        }
-
         if let Err(err) = util::copy_image(&path, dst, true) {
             eprintln!(
                 "failed to copy image from {} to {}: {}",
