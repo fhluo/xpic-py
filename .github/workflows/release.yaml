@@ -32,7 +32,7 @@ jobs:
         run: task setup
 
       - name: Build CLI
-        run: task build-cli -- --release
+        run: task cli:build -- --release
 
       - name: Build
         run: task build

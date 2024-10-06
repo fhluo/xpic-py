@@ -1,39 +1,20 @@
 version: "3"
 
+includes:
+  web:
+    taskfile: ./xpic-web/Taskfile.yaml
+    dir: ./xpic-web
+
+  cli:
+    taskfile: ./xpic-cli/Taskfile.yaml
+    dir: ./xpic-cli
+
 tasks:
-  setup-tauri:
-    cmds:
-      - cargo install tauri-cli --version "^2.0.0-rc"
-
-  setup-web:
-    dir: xpic-web
-    cmds:
-      - bun install
-
   setup:
     deps:
-      - setup-tauri
-      - setup-web
-
-  build-web:
-    dir: xpic-web
+      - task: web:setup
     cmds:
-      - bun run build
-
-  dev-web:
-    dir: xpic-web
-    cmds:
-      - bun run dev
-
-  ui-add:
-    dir: xpic-web
-    cmds:
-      - bun shadcn-svelte add {{.CLI_ARGS}}
-
-  build-cli:
-    dir: xpic-cli
-    cmds:
-      - cargo build {{.CLI_ARGS}}
+      - cargo install tauri-cli
 
   build:
     cmds:

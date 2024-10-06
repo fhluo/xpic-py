@@ -4,8 +4,8 @@
   "version": "0.3.0",
   "identifier": "xpic",
   "build": {
-    "beforeBuildCommand": "task build-web",
-    "beforeDevCommand": "task dev-web",
+    "beforeBuildCommand": "task web:build",
+    "beforeDevCommand": "task web:dev",
     "devUrl": "http://localhost:1420",
     "frontendDist": "../xpic-web/dist"
   },

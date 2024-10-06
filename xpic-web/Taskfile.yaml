@@ -1,0 +1,11 @@
+version: 3
+
+tasks:
+  setup:
+    cmd: bun install
+
+  build:
+    cmd: bun run build
+
+  dev:
+    cmd: bun run dev
