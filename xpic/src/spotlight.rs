@@ -42,7 +42,7 @@ pub fn get_images() -> Result<Vec<PathBuf>, Box<dyn Error>> {
 }
 
 /// Copies images to a specified directory.
-pub fn copy_images_to<P: AsRef<Path>>(dst: P) -> Result<(), Box<dyn Error>> {
+pub fn copy_images_to(dst: impl AsRef<Path>) -> Result<(), Box<dyn Error>> {
     let dst = dst.as_ref();
 
     fs::create_dir_all(&dst)

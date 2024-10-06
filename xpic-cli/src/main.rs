@@ -38,16 +38,19 @@ enum Commands {
 
 fn list_spotlight_wallpapers() {
     if let Err(e) = spotlight::get_images().map(|images| {
-        images.into_iter().for_each(|path| println!("{}", path.display()))
+        images
+            .into_iter()
+            .for_each(|path| println!("{}", path.display()))
     }) {
         eprintln!("failed to get Windows Spotlight wallpapers: {e}")
     }
 }
 
 async fn list_bing_wallpapers() {
-    if let Err(e) = bing::get_images().await.map(|images| {
-        images.into_iter().for_each(|u| println!("{u}"))
-    }) {
+    if let Err(e) = bing::get_images()
+        .await
+        .map(|images| images.into_iter().for_each(|u| println!("{u}")))
+    {
         eprintln!("failed to get Bing wallpapers: {e}");
     }
 }
@@ -73,7 +76,7 @@ async fn list_wallpapers(spotlight: bool, bing: bool) {
     futures::future::join_all(tasks).await;
 }
 
-fn save_spotlight_wallpapers<P: AsRef<Path>>(dir: P) {
+fn save_spotlight_wallpapers(dir: impl AsRef<Path>) {
     if let Err(e) = spotlight::copy_images_to(dir.as_ref()) {
         eprintln!(
             "failed to copy Windows Spotlight wallpapers to {}:{}",
@@ -83,7 +86,7 @@ fn save_spotlight_wallpapers<P: AsRef<Path>>(dir: P) {
     }
 }
 
-async fn save_bing_wallpapers<P: AsRef<Path>>(dir: P) {
+async fn save_bing_wallpapers(dir: impl AsRef<Path>) {
     if let Err(e) = bing::copy_images_to(&dir).await {
         eprintln!(
             "failed to copy Bing wallpapers to {}:{}",
