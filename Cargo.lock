@@ -5904,7 +5904,7 @@ dependencies = [
 
 [[package]]
 name = "xpic-tauri"
-version = "0.3.0-alpha.2"
+version = "0.3.0"
 dependencies = [
  "futures",
  "glob",
