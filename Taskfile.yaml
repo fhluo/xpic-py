@@ -2,27 +2,27 @@ version: 3
 
 tasks:
   format:
-    cmd: rye fmt
+    cmd: uv run ruff format
 
   check:
-    cmd: rye lint
+    cmd: uv run ruff check
 
   sync:
-    cmd: rye sync
+    cmd: uv sync
 
   list:
-    cmd: rye run xpic-cli list
+    cmd: uv run xpic-cli list
 
   save:
-    cmd: rye run xpic-cli save
+    cmd: uv run xpic-cli save
 
   run:
-    cmd: rye run xpic
+    cmd: uv run xpic
 
   gen:
     dir: assets
     cmds:
-      - rye run img-conv -i xpic.png -o xpic.ico
+      - uv run img-conv -i xpic.png -o xpic.ico
     sources:
       - xpic.png
     generates:
@@ -32,13 +32,13 @@ tasks:
     deps:
       - gen
     cmds:
-      - rye run pyinstaller --onefile --name=xpic-cli --icon=assets/xpic.ico xpic_cli/__main__.py
+      - uv run pyinstaller --onefile --name=xpic-cli --icon=assets/xpic.ico xpic_cli/__main__.py
 
   bundle-gui:
     deps:
       - gen
     cmds:
-      - rye run pyinstaller --add-data "assets/xpic.png:assets"  --add-data "assets/xpic.qss:assets" --onefile --name=xpic --icon=assets/xpic.ico --windowed xpic_gui/__main__.py
+      - uv run pyinstaller --add-data "assets/xpic.png:assets"  --add-data "assets/xpic.qss:assets" --onefile --name=xpic --icon=assets/xpic.ico --windowed xpic_gui/__main__.py
 
   bundle:
     deps:

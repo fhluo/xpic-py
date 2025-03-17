@@ -3,38 +3,32 @@ name = "xpic"
 version = "0.2.0"
 description = "Show wallpapers from Windows Spotlight and Bing"
 authors = [
-    { name = "fhluo", email = "20843637+fhluo@users.noreply.github.com" }
-]
-license = { file = "LICENSE" }
-dependencies = [
-    "requests>=2.32.3",
-    "pillow>=10.4.0",
-    "typer>=0.12.5",
-    "rich>=13.8.1",
-    "pyside6>=6.7.2",
-    "win32mica>=3.0",
-    "opencv-python>=4.10.0.84",
+    { name = "fhluo", email = "20843637+fhluo@users.noreply.github.com" },
 ]
 readme = "README.md"
-requires-python = ">= 3.12"
+requires-python = ">=3.13.2"
+license = { file = "LICENSE" }
+dependencies = [
+    "opencv-python>=4.11.0.86",
+    "pillow>=11.1.0",
+    "pyside6>=6.8.2.1",
+    "requests>=2.32.3",
+    "rich>=13.9.4",
+    "typer>=0.15.2",
+    "win32mica>=3.0",
+]
 
-[project.scripts]
-"xpic-cli" = "xpic_cli:main"
-"xpic" = "xpic_gui:main"
-"img-conv" = "tools.img_conv:main"
+[dependency-groups]
+dev = ["pyinstaller>=6.12.0", "ruff>=0.11.0"]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.rye]
-managed = true
-dev-dependencies = [
-    "pyinstaller>=6.10.0",
-]
-
-[tool.hatch.metadata]
-allow-direct-references = true
+[project.scripts]
+"xpic-cli" = "xpic_cli:main"
+"xpic" = "xpic_gui:main"
+"img-conv" = "tools.img_conv:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["xpic", "xpic_cli", "xpic_gui", "tools/img_conv"]
