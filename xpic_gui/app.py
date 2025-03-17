@@ -43,7 +43,7 @@ class ContextMenu(QMenu):
         self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setStyleSheet(
-            "background-color: rgba(7, 15, 43, 90%);" "border-radius: 4px;" "font-size: 14px;" "padding: 5px 0px;"
+            "background-color: rgba(7, 15, 43, 90%);border-radius: 4px;font-size: 14px;padding: 5px 0px;"
         )
 
         # open wallpaper
