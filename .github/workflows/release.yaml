@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    tags: ["v*.*.*"]
+    tags: [ "v*.*.*" ]
 
 jobs:
   release:
@@ -16,6 +16,9 @@ jobs:
         run: |
           winget install --id Task.Task --accept-source-agreements --accept-package-agreements
           "$env:LOCALAPPDATA\Microsoft\WinGet\Links" | Out-File -FilePath "$env:GITHUB_PATH" -Append
+
+      - name: Set up Nushell
+        run: winget install --id=Nushell.Nushell --accept-source-agreements --accept-package-agreements
 
       - name: Set up Rust
         run: |
@@ -36,17 +39,12 @@ jobs:
       - name: Setup
         run: task web:setup
 
-      - name: Build CLI
-        run: task cli:build -- --release
-
       - name: Build
-        run: task build
+        run: task release
 
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            target/release/Xpic.exe
-            target/release/xpic-cli.exe
-            target/release/bundle/msi/*.msi
-            target/release/bundle/nsis/*.exe
+            bin/*.exe
+            bin/*.msi
