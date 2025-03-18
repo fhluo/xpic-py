@@ -3,5 +3,5 @@ resolver = "3"
 members = [
     "xpic",
     "xpic-cli",
-    "xpic-tauri",
+    "app",
 ]

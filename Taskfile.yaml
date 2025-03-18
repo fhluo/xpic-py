@@ -3,8 +3,8 @@ version: "3"
 
 includes:
   web:
-    taskfile: xpic-web/Taskfile.yaml
-    dir: xpic-web
+    taskfile: web/Taskfile.yaml
+    dir: web
 
   cli:
     taskfile: xpic-cli/Taskfile.yaml
@@ -18,16 +18,16 @@ tasks:
       - cargo install tauri-cli
 
   build:
-    dir: xpic-tauri
+    dir: app
     cmds:
       - cargo tauri build
 
   debug:
-    dir: xpic-tauri
+    dir: app
     cmds:
       - cargo tauri build --debug
 
   dev:
-    dir: xpic-tauri
+    dir: app
     cmds:
       - cargo tauri dev

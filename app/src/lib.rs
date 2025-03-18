@@ -73,18 +73,18 @@ async fn update_wallpapers() -> Vec<String> {
 
 #[tauri::command]
 async fn set_as_desktop_wallpaper(path: String) {
-    let path_ = CString::new(path.to_owned()).unwrap();
+    let path_ = CString::new(path.clone()).unwrap();
 
-    unsafe {
+    if let Err(err) = unsafe {
         // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-systemparametersinfow
-        if let Err(err) = SystemParametersInfoA(
+         SystemParametersInfoA(
             SPI_SETDESKWALLPAPER,
             0,
             Some(path_.as_ptr() as *mut c_void),
             SPIF_UPDATEINIFILE,
-        ) {
-            eprintln!("failed to set {} as desktop wallpaper: {}", path, err);
-        }
+        )
+    } {
+        eprintln!("failed to set {} as desktop wallpaper: {}", path, err);
     }
 }
 
