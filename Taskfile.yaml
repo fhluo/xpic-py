@@ -7,27 +7,20 @@ includes:
     dir: web
 
   cli:
-    taskfile: xpic-cli/Taskfile.yaml
-    dir: xpic-cli
+    taskfile: crates/xpic/Taskfile.yaml
+    dir: crates/xpic
+
+  app:
+    taskfile: app/Taskfile.yaml
+    dir: app
 
 tasks:
   setup:
     deps:
       - task: web:setup
-    cmds:
-      - cargo install tauri-cli
+      - task: app:setup
 
   build:
-    dir: app
-    cmds:
-      - cargo tauri build
-
-  debug:
-    dir: app
-    cmds:
-      - cargo tauri build --debug
-
-  dev:
-    dir: app
-    cmds:
-      - cargo tauri dev
+    deps:
+      - task: cli:build
+      - task: app:build

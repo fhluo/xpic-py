@@ -1,0 +1,14 @@
+version: "3"
+
+tasks:
+  setup:
+    cmd: cargo install tauri-cli
+
+  build:
+    cmd: cargo tauri build
+
+  debug:
+    cmd: cargo tauri build --debug
+
+  dev:
+    cmd: cargo tauri dev
