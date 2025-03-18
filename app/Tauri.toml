@@ -1,0 +1,45 @@
+product-name = "Xpic"
+version = "0.3.0"
+identifier = "xpic"
+
+[build]
+before-build-command = "task web:build"
+before-dev-command = "task web:dev"
+dev-url = "http://localhost:1420"
+frontend-dist = "../web/dist"
+
+[[app.windows]]
+title = "Xpic"
+width = 1184
+height = 700
+transparent = true
+theme = "Dark"
+
+[app.security.csp]
+default-src = "'self' customprotocol: asset:"
+connect-src = "ipc: http://ipc.localhost"
+img-src = "'self' asset: http://asset.localhost blob: data:"
+style-src = "'unsafe-inline' 'self'"
+
+[app.security.assetProtocol]
+enable = true
+scope = [
+    "$LOCALDATA/Xpic/.cache/**"
+]
+
+[bundle]
+active = true
+targets = "all"
+icon = [
+    "icons/32x32.png",
+    "icons/128x128.png",
+    "icons/128x128@2x.png",
+    "icons/icon.icns",
+    "icons/icon.ico"
+]
+
+[bundle.windows.wix]
+language = [
+    "en-US",
+    "zh-CN"
+]

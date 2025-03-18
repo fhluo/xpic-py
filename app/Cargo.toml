@@ -4,7 +4,7 @@ version = "0.3.0"
 edition = "2024"
 
 [build-dependencies]
-tauri-build = { version = "2.0.0-rc", features = [] }
+tauri-build = { version = "2.0", features = [] }
 
 [lib]
 name = "xpic_lib"
@@ -16,7 +16,7 @@ path = "src/main.rs"
 
 [dependencies]
 xpic = { path = "../xpic" }
-tauri = { version = "2.3", features = ["protocol-asset"] }
+tauri = { version = "2.3", features = ["protocol-asset", "config-toml"] }
 tauri-plugin-shell = "2.2"
 tauri-plugin-fs = "2.2"
 tauri-plugin-dialog = "2.2"
