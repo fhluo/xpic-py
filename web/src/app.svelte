@@ -154,7 +154,7 @@
                    ondblclick={() => void open(path)}
               />
             </ContextMenu.Trigger>
-            <ContextMenu.Content class="menu">
+            <ContextMenu.Content class="menu z-50">
               <ContextMenu.Item class="menu-item" onclick={() => void open(path)}>
                 <div class="flex flex-row justify-center items-center gap-3">
                   <ExternalLink strokeWidth={1.5} size={20}/>
