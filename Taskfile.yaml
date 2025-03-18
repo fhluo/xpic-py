@@ -22,5 +22,15 @@ tasks:
 
   build:
     deps:
-      - task: cli:build
       - task: app:build
+
+  dev:
+    deps:
+      - task: app:dev
+
+  release:
+    cmds:
+      - task: cli:build
+      - nu -c "mkdir bin; mv target/release/xpic.exe bin/xpic-cli.exe"
+      - task: app:build
+      - nu -c "mv target/release/Xpic.exe bin; mv target/release/bundle/msi/*.msi bin; mv target/release/bundle/nsis/*.exe bin;"
