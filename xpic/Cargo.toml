@@ -1,7 +1,7 @@
 [package]
 name = "xpic"
-version = "0.1.6"
-edition = "2021"
+version = "0.2.0"
+edition = "2024"
 
 [dependencies]
 futures = "0.3"
