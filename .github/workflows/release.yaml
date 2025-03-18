@@ -18,7 +18,9 @@ jobs:
           "$env:LOCALAPPDATA\Microsoft\WinGet\Links" | Out-File -FilePath "$env:GITHUB_PATH" -Append
 
       - name: Set up Nushell
-        run: winget install --id=Nushell.Nushell --accept-source-agreements --accept-package-agreements
+        run: |
+          winget install --id=Nushell.Nushell --accept-source-agreements --accept-package-agreements
+          "$env:LOCALAPPDATA\Programs\nu\bin" | Out-File -FilePath "$env:GITHUB_PATH" -Append
 
       - name: Set up Rust
         run: |
