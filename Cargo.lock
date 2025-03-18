@@ -6396,6 +6396,7 @@ dependencies = [
 name = "xpic"
 version = "0.2.0"
 dependencies = [
+ "clap",
  "futures",
  "glob",
  "image",
@@ -6405,15 +6406,6 @@ dependencies = [
  "serde_json",
  "tokio",
  "url",
-]
-
-[[package]]
-name = "xpic-cli"
-version = "0.2.0"
-dependencies = [
- "clap",
- "tokio",
- "xpic",
 ]
 
 [[package]]

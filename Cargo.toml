@@ -1,7 +1,6 @@
 [workspace]
 resolver = "3"
 members = [
-    "xpic",
-    "xpic-cli",
+    "crates/xpic",
     "app",
 ]

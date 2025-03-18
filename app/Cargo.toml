@@ -15,7 +15,7 @@ name = "Xpic"
 path = "src/main.rs"
 
 [dependencies]
-xpic = { path = "../xpic" }
+xpic = { path = "../crates/xpic" }
 tauri = { version = "2.3", features = ["protocol-asset", "config-toml"] }
 tauri-plugin-shell = "2.2"
 tauri-plugin-fs = "2.2"
