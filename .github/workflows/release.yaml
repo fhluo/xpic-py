@@ -6,22 +6,27 @@ on:
 
 jobs:
   release:
-    runs-on: windows-latest
+    runs-on: windows-2025
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: 'stable'
-
       - name: Set up Task
-        run: go install github.com/go-task/task/v3/cmd/task@latest
+        run: |
+          winget install --id Task.Task --accept-source-agreements --accept-package-agreements
+          "$env:LOCALAPPDATA\Microsoft\WinGet\Links" | Out-File -FilePath "$env:GITHUB_PATH" -Append
 
-      - name: Set up Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+      - name: Set up Rust
+        run: |
+          rustup default stable
+          rustup update
+
+      - name: Set up Cargo Binary Install
+        uses: cargo-bins/cargo-binstall@main
+
+      - name: Set up Tauri CLI
+        run: cargo binstall tauri-cli
 
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
@@ -29,7 +34,7 @@ jobs:
           bun-version: latest
 
       - name: Setup
-        run: task setup
+        run: task web:setup
 
       - name: Build CLI
         run: task cli:build -- --release
