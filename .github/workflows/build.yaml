@@ -1,0 +1,40 @@
+name: Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: windows-2025
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Task
+        run: |
+          winget install --id Task.Task --accept-source-agreements --accept-package-agreements
+          "$env:LOCALAPPDATA\Microsoft\WinGet\Links" | Out-File -FilePath "$env:GITHUB_PATH" -Append
+
+      - name: Set up Rust
+        run: |
+          rustup default stable
+          rustup update
+
+      - name: Set up Cargo Binary Install
+        uses: cargo-bins/cargo-binstall@main
+
+      - name: Set up Tauri CLI
+        run: cargo binstall tauri-cli
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup
+        run: task web:setup
+
+      - name: Build
+        run: task build
