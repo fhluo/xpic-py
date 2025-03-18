@@ -7,6 +7,7 @@ use serde::{Deserialize, Serialize};
 use std::error::Error;
 use std::fs;
 use std::path::Path;
+use std::str::FromStr;
 use url::Url;
 
 #[derive(Serialize, Deserialize)]
@@ -67,10 +68,10 @@ impl Default for ImageDetail {
     }
 }
 
-impl TryFrom<&str> for ImageDetail {
-    type Error = Box<dyn Error>;
+impl FromStr for ImageDetail {
+    type Err = Box<dyn Error>;
 
-    fn try_from(id: &str) -> Result<Self, Self::Error> {
+    fn from_str(id: &str) -> Result<Self, Self::Err> {
         let re = Regex::new(
             r"(?x)
 ^OHR
@@ -126,7 +127,7 @@ impl Image {
     }
 
     pub fn detail(&self) -> Result<ImageDetail, Box<dyn Error>> {
-        Ok(ImageDetail::try_from(self.id().ok_or("")?)?)
+        self.id().as_deref().unwrap_or("").parse()
     }
 }
 
@@ -151,7 +152,8 @@ pub async fn copy_images_to<P: AsRef<Path>>(dst: P) -> Result<(), Box<dyn Error>
         .await?
         .into_iter()
         .filter_map(|image| {
-            let dst = dst.join(image.filename());
+            let image = Image::try_from(image).ok()?;
+            let dst = dst.join(image.id()?);
             if dst.exists() {
                 return None;
             }

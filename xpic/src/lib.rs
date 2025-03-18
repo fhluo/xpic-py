@@ -35,8 +35,8 @@ mod tests {
         ];
 
         for (id, expected) in cases {
-            let parsed_id = ImageDetail::try_from(id);
-            assert_eq!(parsed_id, Ok(expected));
+            let image_detail: ImageDetail = id.parse().unwrap();
+            assert_eq!(image_detail, expected);
         }
     }
 }
